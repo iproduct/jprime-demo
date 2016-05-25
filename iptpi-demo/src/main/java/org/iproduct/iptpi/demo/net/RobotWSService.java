@@ -176,8 +176,9 @@ public class RobotWSService {
 				json -> {
 //				System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), json);
 				RelativeMovement relativeMovement = gson.fromJson(json, RelativeMovement.class);
-				Command command = new Command(MOVE_FORWARD, 
-						new ForwardMovement(relativeMovement.getDeltaX(), relativeMovement.getVelocity()));
+//				Command command = new Command(MOVE_FORWARD, 
+//						new ForwardMovement(relativeMovement.getDeltaX(), relativeMovement.getVelocity()));
+				Command command = new Command(MOVE_RELATIVE, relativeMovement);
 				System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), command);				
 				movementCommands.onNext(command);
 			});

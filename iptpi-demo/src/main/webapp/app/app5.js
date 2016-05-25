@@ -116,7 +116,7 @@ var AppComponent = (function () {
         this.command = {
             deltaX: 400,
             deltaY: 0,
-            curvature: 1 / 300,
+            deltaHeading: 1.5,
             velocity: 40,
             angularVelocity: 0,
             acceleration: 0,
@@ -128,7 +128,7 @@ var AppComponent = (function () {
         this.command = {
             deltaX: 400,
             deltaY: 0,
-            curvature: -1 / 300,
+            deltaHeading: -1.5,
             velocity: 40,
             angularVelocity: 0,
             acceleration: 0,
@@ -140,7 +140,7 @@ var AppComponent = (function () {
         this.command = {
             deltaX: -200,
             deltaY: 0,
-            curvature: 0,
+            deltaHeading: 0,
             velocity: -50,
             angularVelocity: 0,
             acceleration: 0,

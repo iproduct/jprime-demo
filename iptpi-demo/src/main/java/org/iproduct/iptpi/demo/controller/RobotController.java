@@ -38,19 +38,20 @@ public class RobotController {
 	}
 
 	public void moveUp() {
-		commands.onNext(new Command(MOVE_FORWARD, new ForwardMovement(400, 50)));
+//		commands.onNext(new Command(MOVE_FORWARD, new ForwardMovement(400, 50)));
+		commands.onNext(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, 0,  50)));
 	}
 
 	public void moveDown() {
-		commands.onNext(new Command(MOVE_FORWARD, new RelativeMovement(-200, 0, 0,  -50)));
+		commands.onNext(new Command(MOVE_RELATIVE, new RelativeMovement(-200, 0, 0,  -50)));
 	}
 
 	public void moveLeft() {
-		commands.onNext(new Command(MOVE_RELATIVE, new RelativeMovement(200, 0, 1/300f,  40)));
+		commands.onNext(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, 1f,  40)));
 	}
 
 	public void moveRight() {
-		commands.onNext(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, -1/300f,  40)));
+		commands.onNext(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, -1f,  40)));
 	}
 	
 	public void followLine() {

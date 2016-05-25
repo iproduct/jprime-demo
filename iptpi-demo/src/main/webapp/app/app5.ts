@@ -37,7 +37,7 @@ interface Position {
 interface MovementCommand {
 	deltaX: number;
 	deltaY: number;
-	curvature: number;
+	deltaHeading: number;
 	velocity:number; 
 	angularVelocity: number;
 	acceleration: number;
@@ -225,7 +225,7 @@ class AppComponent {
 		this.command = {
 			deltaX: 400,
 			deltaY: 0,
-			curvature: 1 / 300,
+			deltaHeading: 1.5,
 			velocity: 40,
 			angularVelocity: 0,
 			acceleration: 0,
@@ -238,7 +238,7 @@ class AppComponent {
 		this.command = {
 			deltaX: 400,
 			deltaY: 0,
-			curvature: -1 / 300,
+			deltaHeading: -1.5,
 			velocity: 40,
 			angularVelocity: 0,
 			acceleration: 0,
@@ -251,7 +251,7 @@ class AppComponent {
 		this.command = {
 			deltaX: -200,
 			deltaY: 0,
-			curvature: 0,
+			deltaHeading: 0,
 			velocity: -50,
 			angularVelocity: 0,
 			acceleration: 0,
