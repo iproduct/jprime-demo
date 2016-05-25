@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.iproduct.iptpi.domain.Command;
 import org.iproduct.iptpi.domain.movement.MovementData;
+import org.iproduct.iptpi.domain.movement.ForwardMovement;
 import org.iproduct.iptpi.domain.movement.MovementCommandSubscriber;
 import org.iproduct.iptpi.domain.movement.RelativeMovement;
 import org.iproduct.iptpi.domain.position.PositionFluxion;
@@ -145,7 +146,7 @@ public class RobotWSService {
 			}
 			
 //			String path = "src/main/webapp" + uri;	
-			String path = "/home/pi/.launchpi_projects/iptpi-voxxed-demo/webapp" + uri;	//Pi only
+			String path = "/home/pi/.launchpi_projects/iptpi-demo/webapp" + uri;	//Pi only
 			
 			Buffer responseBuffer;
 			try {
@@ -173,9 +174,12 @@ public class RobotWSService {
 //									entry1.getValue())));				
 			channel.map(Buffer::asString).consume(		
 				json -> {
-				System.out.printf(">>>>>>>>>>>>> %s greeting = %s%n", Thread.currentThread(), json);
+//				System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), json);
 				RelativeMovement relativeMovement = gson.fromJson(json, RelativeMovement.class);
-				movementCommands.onNext(new Command(MOVE_RELATIVE, relativeMovement));
+				Command command = new Command(MOVE_FORWARD, 
+						new ForwardMovement(relativeMovement.getDeltaX(), relativeMovement.getVelocity()));
+				System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), command);				
+				movementCommands.onNext(command);
 			});
 			
 	

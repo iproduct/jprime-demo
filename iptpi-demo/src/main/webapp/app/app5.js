@@ -38,7 +38,7 @@ var AppComponent = (function () {
         this.command = DEFAULT_COMMAND;
         this.canvas = document.getElementById("robot-canvas");
         this.ctx = this.canvas.getContext("2d");
-        this.robotImage = document.getElementById("iptpi-image");
+        this.robotImage = new Image(); //<HTMLImageElement> document.getElementById("iptpi-image");
         this.compassImage = document.getElementById("compass-image");
         this.needle = document.getElementById("needle-image");
         this.degrees = 0;
@@ -62,7 +62,8 @@ var AppComponent = (function () {
         }, function () {
             console.log("Complete:", event);
         });
-        this.updateCanvasDrawing();
+        this.robotImage.src = "../img/iptpi_m.png";
+        this.robotImage.onload = function () { return _this.updateCanvasDrawing(); };
     }
     // onSelect(wish: Wish) {
     // 	this.selectedWish = wish;
@@ -162,7 +163,7 @@ angular2_1.bootstrap(AppComponent);
 var DEFAULT_COMMAND = {
     deltaX: 400,
     deltaY: 0,
-    curvature: 0,
+    deltaHeading: 0,
     velocity: 50,
     angularVelocity: 0,
     acceleration: 0,

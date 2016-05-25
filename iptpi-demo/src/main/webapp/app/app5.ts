@@ -128,7 +128,7 @@ class AppComponent {
 
 	private canvas = <HTMLCanvasElement> document.getElementById("robot-canvas");
 	private ctx = this.canvas.getContext("2d");
-	private robotImage = <HTMLImageElement> document.getElementById("iptpi-image");
+	private robotImage = new Image();  //<HTMLImageElement> document.getElementById("iptpi-image");
 	private compassImage = <HTMLImageElement>document.getElementById("compass-image");
 	private needle = <HTMLImageElement>document.getElementById("needle-image");
 	private degrees: number = 0;
@@ -162,8 +162,8 @@ class AppComponent {
 			() => {
 				console.log("Complete:", event);
 			});
-
-		this.updateCanvasDrawing();
+        this.robotImage.src = "../img/iptpi_m.png";
+		this.robotImage.onload =  () => this.updateCanvasDrawing();
 	}
 
 	// onSelect(wish: Wish) {
@@ -267,7 +267,7 @@ bootstrap(AppComponent);
 var DEFAULT_COMMAND: MovementCommand = {
 	deltaX: 400,
 	deltaY: 0,
-	curvature: 0,
+	deltaHeading: 0,
 	velocity: 50,
 	angularVelocity: 0,
 	acceleration: 0,
