@@ -1,0 +1,20 @@
+{
+  	"compilerOptions": {
+	    "target": "ES5",
+	    "module": "commonjs",
+	    "sourceMap": true,
+	    "emitDecoratorMetadata": true,
+	    "experimentalDecorators": true,
+	    "removeComments": false,
+	    "noImplicitAny": false
+  	},
+  	"filesGlob": [
+        "./**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
+    "files": [
+        "./app/ipt_rx_websocket.ts",
+        "./app/app5.ts"
+    ]
+
+  }

@@ -1,0 +1,27 @@
+{
+  "name": "IPT_Reactor_Demo_JUG_Wishes_1_0",
+  "version": "1.0.1",
+  "description" : "End-to-end reactive WebSockets demo with Angular 2 (TypeScript) and RxJS (RxNext) and JavaSE + Project Reactor at server side. No web server needed - all resources as well as live WebSocket events are served by custom HTTP endpoint using Reactor Net.",
+  "main": "app/app5.js",
+  "keywords": ["WebSocket", "reactive", "demo", "rxjs", "RxNext", "angular2"],
+  "author": "Trayan Iliev <office@iproduct.org> (http://iproduct.org)",
+  "license": { "type": "Apache-2.0", "url": "http://opensource.org/licenses/apache2.0.php"},
+  "readme" : "README.md",
+  "repository" :
+    { "type" : "git"
+    , "url" : "https://github.com/iproduct/low-latency-high-throughput"
+    },
+  "scripts": {
+    "tsc": "tsc -p . -w",
+    "start": "live-server --open=."
+  },
+  "dependencies": {
+    "angular2": "2.0.0-alpha.44",
+    "rxjs": "^5.0.0-alpha.14",
+    "systemjs": "^0.19.2"
+  },
+  "devDependencies": {
+    "live-server": "^0.8.2",
+    "typescript": "^1.6.2"
+  }
+}
