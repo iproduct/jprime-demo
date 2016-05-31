@@ -91,7 +91,7 @@ interface MovementCommand {
       				<input  class="pos-display" [ng-model]="position.heading | number:'.2-2'" readonly></input>
       			<span>
             </div> 
-            	<canvas id="robot-canvas" class="robot-canvas center-block" width="400" height="500" >
+            <canvas id="robot-canvas" class="robot-canvas center-block" width="400" height="500" >
             </canvas>
 
             <div class="robot-controls" class="container-fluid">
@@ -115,10 +115,26 @@ interface MovementCommand {
 				</div>	
             </div> 
     </div>
+
+	<div class="position-display">
+            	<span class="display-position">
+            		<label>Distance: </label>
+      				<input  class="pos-display" [(ng-model)]="command.deltaX" placeholder="mm"></input>
+      			<span>
+            	<span class="display-position">
+            		<label>Velocity: </label>
+      				<input class="pos-display" [(ng-model)]="command.velocity" placeholder="mm/s"></input>
+      			<span>
+            	<span class="display-position">
+            		<label>Angle: </label>
+      				<input  class="pos-display" [(ng-model)]="command.deltaHeading" placeholder="rad"></input>
+      			<span>
+    </div>
   </div>
   `
 })
 class AppComponent {
+	public commnad = DEFAULT_COMMAND;
 	public title = 'Command your IPTPI Robot';
 	public position: Position = { "x": 0, "y": 0, "heading": 0, timestamp: 0};
 	public positions: Position[] = [];

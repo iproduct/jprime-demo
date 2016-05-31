@@ -13,6 +13,8 @@ import org.iproduct.iptpi.demo.view.RobotView;
 import org.iproduct.iptpi.domain.arduino.ArduinoCommandSubscriber;
 import org.iproduct.iptpi.domain.arduino.ArduinoData;
 import org.iproduct.iptpi.domain.arduino.ArduinoFactory;
+import org.iproduct.iptpi.domain.audio.AudioFactory;
+import org.iproduct.iptpi.domain.audio.AudioPlayer;
 import org.iproduct.iptpi.domain.movement.MovementCommandSubscriber;
 import org.iproduct.iptpi.domain.movement.MovementFactory;
 import org.iproduct.iptpi.domain.position.PositionFactory;
@@ -30,6 +32,7 @@ public class IPTPIDemo {
 	private MovementCommandSubscriber movementSub, movementSub2;
 	private List<JComponent> presentationViews = new ArrayList<>();
 	private RobotWSService positionsService;
+	private AudioPlayer audio;
 	
 	public IPTPIDemo() throws IOException {
 		//receive Arduino data readings
@@ -42,15 +45,19 @@ public class IPTPIDemo {
 		//enable sending commands to Arduino
 		arduinoCommnadsSub = ArduinoFactory.getInstance().createArduinoCommandSubscriber();
 		
+		//Audio player - added @jPrime 2016 Hackergarten 
+		audio = AudioFactory.createAudioPlayer();
+//		audio = null;
+		
 		//wire robot main controller with services
-		movementSub = MovementFactory.createCommandMovementSubscriber(positionsPub, arduinoData.getLineFluxion());
-		controller = new RobotController(Subscribers.consumer(this::tearDown), movementSub, arduinoCommnadsSub);
+		movementSub = MovementFactory.createCommandMovementSubscriber(positionsPub, arduinoData.getLineFluxion(), audio);
+		controller = new RobotController(Subscribers.consumer(this::tearDown), movementSub, arduinoCommnadsSub, audio);
 		
 		//create view with controller and delegate material views from query services
 		view = new RobotView("IPTPI Reactive Robotics Demo", controller, presentationViews);
 		
 		//expose as WS service
-		movementSub2 = MovementFactory.createCommandMovementSubscriber(positionsPub, arduinoData.getLineFluxion());
+		movementSub2 = MovementFactory.createCommandMovementSubscriber(positionsPub, arduinoData.getLineFluxion(), audio);
 		positionsService = new RobotWSService(positionsPub, movementSub2);	
 				
 	}

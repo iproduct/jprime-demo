@@ -173,20 +173,20 @@ public class RobotView extends JFrame{
 		);
 		pathSearchPanel.setLayout(new GridLayout(0, 1, 0, 0));
 		
-		JComboBox<String> cbSelectAlgorithm = new JComboBox<>();
-		cbSelectAlgorithm.setModel(
-			new DefaultComboBoxModel<>(new String[] {
-					"Depth First Search (DFS)", 
-					"Breadth First Search (BFS)"}) //SEARCH_ALGORITHMS
-		);
-		pathSearchPanel.add(cbSelectAlgorithm);
-		
 		JButton btnStartSearch = new JButton("FollowLine");
 		btnStartSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				controller.followLine();
 			}
 		});
+		
+		JButton btnSayHello = new JButton("Say Hello");
+		btnSayHello.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.sayHello();
+			}
+		});
+		pathSearchPanel.add(btnSayHello);
 		pathSearchPanel.add(btnStartSearch);
 		
 		JButton btnNextStep = new JButton("Stop");

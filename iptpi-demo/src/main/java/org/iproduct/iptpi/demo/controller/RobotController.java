@@ -3,6 +3,7 @@ package org.iproduct.iptpi.demo.controller;
 import org.iproduct.iptpi.domain.Command;
 import org.iproduct.iptpi.domain.arduino.ArduinoCommand;
 import org.iproduct.iptpi.domain.arduino.ArduinoCommandSubscriber;
+import org.iproduct.iptpi.domain.audio.AudioPlayer;
 import org.iproduct.iptpi.domain.movement.MovementData;
 import org.iproduct.iptpi.domain.movement.ForwardMovement;
 import org.iproduct.iptpi.domain.movement.MovementCommandSubscriber;
@@ -22,14 +23,21 @@ public class RobotController {
 	private TopicProcessor<Command> commands = TopicProcessor.create();
 	private TopicProcessor<ArduinoCommand> arduinoCommands = TopicProcessor.create();
 	private Subscriber<Integer> onExitSubscriber;
+	private AudioPlayer audio;
 		
 	public RobotController(Subscriber<Integer> onExitSubscriber, MovementCommandSubscriber commandSub,
-			ArduinoCommandSubscriber arduinoSub) {
+			ArduinoCommandSubscriber arduinoSub, AudioPlayer audio) {
 		this.onExitSubscriber = onExitSubscriber;
 		this.commandSub = commandSub;
 		commands.subscribe(commandSub);
 		this.arduinoSub = arduinoSub;
 		arduinoCommands.subscribe(arduinoSub);
+		this.audio = audio;
+	}
+
+	public void sayHello() {
+		commands.onNext(new Command(SAY_HELLO, null));
+		arduinoCommands.onNext(ArduinoCommand.NOT_FOLLOW_LINE);
 	}
 
 	public void stop() {
