@@ -1,14 +1,15 @@
 package org.iproduct.iptpi.domain.movement;
 import org.iproduct.iptpi.domain.arduino.LineReadings;
 import org.iproduct.iptpi.domain.audio.AudioPlayer;
-import org.iproduct.iptpi.domain.position.PositionFluxion;
+import org.iproduct.iptpi.domain.position.PositionsFlux;
 
-import reactor.rx.Fluxion;
+import reactor.core.publisher.Flux;
 
 public class MovementFactory {
-	public static MovementCommandSubscriber createCommandMovementSubscriber(
-			PositionFluxion positions,
-			Fluxion<LineReadings> lineReadings,
+	
+	public static MovementCommandSubscriber createMovementCommandSubscriber(
+			PositionsFlux positions,
+			Flux<LineReadings> lineReadings,
 			AudioPlayer audio
 			) {
 		return new MovementCommandSubscriber(positions, lineReadings, audio);

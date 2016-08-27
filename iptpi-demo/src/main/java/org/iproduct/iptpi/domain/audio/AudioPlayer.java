@@ -19,7 +19,7 @@ public class AudioPlayer
 
 	public AudioPlayer() {
 		// initialize wiringPi library
-		Gpio.wiringPiSetupGpio();
+//		Gpio.wiringPiSetupGpio();
 
 		// GPIO output pin
 		

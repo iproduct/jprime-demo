@@ -1,60 +1,66 @@
 package org.iproduct.iptpi.domain.movement;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan;
+import static java.lang.Math.cbrt;
+import static java.lang.Math.cos;
+import static java.lang.Math.hypot;
+import static java.lang.Math.min;
+import static java.lang.Math.pow;
+import static java.lang.Math.signum;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.MAIN_AXE_LENGTH;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.MAX_ROBOT_ANGULAR_ACCELERATION;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.MAX_ROBOT_LINEAR_ACCELERATION;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.MAX_ROBOT_LINEAR_VELOCITY;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.ROBOT_STOPPING_DECCELERATION;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.WHEEL_RADIUS;
+import static org.iproduct.iptpi.domain.CommandName.STOP;
+import static org.iproduct.iptpi.domain.CommandName.VOID;
+
 import org.iproduct.iptpi.domain.Command;
-import org.iproduct.iptpi.domain.CommandData;
 import org.iproduct.iptpi.domain.arduino.LineReadings;
 import org.iproduct.iptpi.domain.audio.AudioPlayer;
 import org.iproduct.iptpi.domain.position.Position;
-import org.iproduct.iptpi.domain.position.PositionFluxion;
+import org.iproduct.iptpi.domain.position.PositionsFlux;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import com.pi4j.wiringpi.Gpio;
 
-import reactor.core.publisher.SchedulerGroup;
-import reactor.core.subscriber.ConsumerSubscriber;
-import reactor.core.subscriber.Subscribers;
-import reactor.core.tuple.Tuple;
-import reactor.core.tuple.Tuple2;
-import reactor.core.tuple.Tuple3;
-import reactor.core.tuple.Tuple4;
-import reactor.rx.Broadcaster;
-import reactor.rx.Fluxion;
+import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.Flux;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuple3;
+import reactor.util.function.Tuple4;
+import reactor.util.function.Tuples;
 
-import static java.lang.Math.*;
-import static org.iproduct.iptpi.domain.position.PositionFluxion.*;
-
-import java.util.function.BiFunction;
-
-import javax.swing.text.Highlighter.HighlightPainter;
-
-import static org.iproduct.iptpi.demo.robot.RobotParametrs.*;
-import static org.iproduct.iptpi.domain.CommandName.*;
-import static java.lang.Math.*;
-
-public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
+public class MovementCommandSubscriber implements Subscriber<Command>  {
 	public static final int MAX_SPEED = 1024;
 	public static final int CLOCK_DIVISOR = 2;
 	public static final double LANDING_CURVE_PARAMETER = 0.000000005;
 	
 	public static final MotorsCommand STOP_COMMAND = new MotorsCommand(0, 0, 0, 0, 0);
 	
-	private PositionFluxion positions;
-	private Fluxion<LineReadings> lineReadings;
+	private Subscription subscription;
+	private PositionsFlux positions;
+	private Flux<LineReadings> lineReadings;
 //	private SchedulerGroup eventLoops = SchedulerGroup.async();
 	
 	//Create movement command broadcaster
-	private Broadcaster<Command> commandFluxion = Broadcaster.create();
+	private EmitterProcessor<Command> commandFlux = EmitterProcessor.create();
 	
 	//Audio player
 	AudioPlayer audio;
 	
 	
-	public MovementCommandSubscriber(PositionFluxion positions, Fluxion<LineReadings> lineReadings, AudioPlayer audio) {
+	public MovementCommandSubscriber(PositionsFlux positions, Flux<LineReadings> lineReadings, AudioPlayer audio) {
 		this.positions = positions;
 		this.lineReadings = lineReadings;
 		this.audio = audio;
-		
-		// initialize wiringPi library
-		Gpio.wiringPiSetupGpio();
 		
 		// Motor direction pins
 		Gpio.pinMode(5, Gpio.OUTPUT);
@@ -68,7 +74,7 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 	}
 
 	@Override
-	public void doNext(Command command) {
+	public void onNext(Command command) {
 		
 		switch (command.getName()) {
 		case MOVE_FORWARD : {
@@ -88,7 +94,7 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 			System.out.println(initialCommand);
 			runMotors(initialCommand);
 
-			Position startPos = positions.elementAt(1).get();
+			Position startPos = positions.elementAt(1).block();
 								
 			double distance = forwardMove.getDistance();
 			double targetHeading = startPos.getHeading();
@@ -105,17 +111,17 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 			double startH = startPos.getHeading();
 			System.out.println("START POSITION: " + startPos);
 			
-			Fluxion<Position> skip1 = positions.skip(1);
-			Fluxion<Tuple2<Position, Position>> lastTwoPositionsFluxion = Fluxion.zip(positions, skip1);
+			Flux<Position> skip1 = positions.skip(1);
+			Flux<Tuple2<Position, Position>> lastTwoPositionsFlux = Flux.zip(positions, skip1);
 			
-			Fluxion<Tuple3<Position, Position, Command>> fluxion = 
-				Fluxion.combineLatest(
-					lastTwoPositionsFluxion, 
-					commandFluxion.startWith(new Command(VOID, null)),
-					(tuple2, lastCommand) -> Tuple.of(tuple2.getT1(), tuple2.getT2(), lastCommand)						
+			Flux<Tuple3<Position, Position, Command>> flux = 
+				Flux.combineLatest(
+					lastTwoPositionsFlux, 
+					commandFlux.startWith(new Command(VOID, null)),
+					(tuple2, lastCommand) -> Tuples.of(tuple2.getT1(), tuple2.getT2(), lastCommand)						
 			);
 			
-			fluxion.scan(initialCommand, (last, tuple3) -> {
+			flux.scan(initialCommand, (last, tuple3) -> {
 					System.out.println("########## NEW EVENT !!!!!!!!!!!");
 					Position prevPos = tuple3.getT1();
 					Position currPos = tuple3.getT2();
@@ -206,9 +212,9 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 					return motorsCommand;
 				})
 				.takeUntil((MotorsCommand motorsCommand) -> motorsCommand.equals(STOP_COMMAND) ) 
-				.subscribe( Subscribers.consumer( (MotorsCommand motorsCommand) -> {
+				.subscribe( (MotorsCommand motorsCommand) -> {
 					System.out.println(motorsCommand);
-				}));
+				});
 		}
 		break;
 			
@@ -229,7 +235,7 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 			System.out.println(initialCommand);
 			runMotors(initialCommand);
 
-			Position startPos = positions.elementAt(1).get();
+			Position startPos = positions.elementAt(1).block();
 								
 			double distance = forwardMove.getDistance();
 			double targetHeading = startPos.getHeading();
@@ -246,24 +252,24 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 			double startH = startPos.getHeading();
 			System.out.println("START POSITION: " + startPos);
 			
-			Fluxion<Position> skip1 = positions.skip(1);
-			Fluxion<Tuple2<Position, Position>> lastTwoPositionsFluxion = Fluxion.zip(positions, skip1);
+			Flux<Position> skip1 = positions.skip(1);
+			Flux<Tuple2<Position, Position>> lastTwoPositionsFlux = Flux.zip(positions, skip1);
 			
-			Fluxion<Tuple4<Position, Position, LineReadings, Command>> fluxion = 
-				Fluxion.combineLatest(
-					lastTwoPositionsFluxion, 
+			Flux<Tuple4<Position, Position, LineReadings, Command>> flux = 
+				Flux.combineLatest(
+					lastTwoPositionsFlux, 
 					lineReadings,
-					commandFluxion.startWith(new Command(VOID, null)),
+					commandFlux.startWith(new Command(VOID, null)),
 					(Object[] args) -> 
-						Tuple.of(((Tuple2<Position, Position>)args[0]).getT1(), 
+						Tuples.of(((Tuple2<Position, Position>)args[0]).getT1(), 
 								((Tuple2<Position, Position>)args[0]).getT2(), 
 								(LineReadings)args[1], 
 								(Command)args[2])						
 				);
-//			commandFluxion.onNext(new Command(VOID, null)); // at least one command needed to unblock combined event stream
-//			commandFluxion.onNext(new Command(VOID, null)); // at least one command needed to unblock combined event stream
+//			commandFlux.onNext(new Command(VOID, null)); // at least one command needed to unblock combined event stream
+//			commandFlux.onNext(new Command(VOID, null)); // at least one command needed to unblock combined event stream
 			
-			fluxion.scan(initialCommand, (last, tuple4) -> {
+			flux.scan(initialCommand, (last, tuple4) -> {
 					System.out.println("########## NEW EVENT !!!!!!!!!!!");
 					Position prevPos = tuple4.getT1();
 					Position currPos = tuple4.getT2();
@@ -385,9 +391,9 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 					return motorsCommand;
 				})
 				.takeUntil((MotorsCommand motorsCommand) -> motorsCommand.equals(STOP_COMMAND) ) 
-				.subscribe( Subscribers.consumer( (MotorsCommand motorsCommand) -> {
+				.subscribe( (MotorsCommand motorsCommand) -> {
 					System.out.println(motorsCommand);
-				}));
+				});
 		}
 		break;
 		
@@ -408,7 +414,7 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 			System.out.println(initialCommand);
 			runMotors(initialCommand);
 
-			Position startPos = positions.elementAt(1).get();
+			Position startPos = positions.elementAt(1).block();
 								
 			double targetDeltaX = relMove.getDeltaX();
 			double targetDeltaY = relMove.getDeltaY();
@@ -463,8 +469,8 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 			double startH = startPos.getHeading();
 			System.out.println("START POSITION: " + startPos);
 			
-			Fluxion<Position> skip1 = positions.skip(1);
-			Fluxion.zip(positions, skip1)
+			Flux<Position> skip1 = positions.skip(1);
+			Flux.zip(positions, skip1)
 				.scan(initialCommand, (last, tupple) -> {
 					Position prevPos = ((Position)tupple.getT1());
 					Position currPos = ((Position)tupple.getT2());
@@ -568,15 +574,15 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 					return motorsCommand;
 				})
 				.takeUntil((MotorsCommand motorsCommand) -> motorsCommand.equals(STOP_COMMAND) ) 
-				.subscribe( Subscribers.consumer( (MotorsCommand motorsCommand) -> {
+				.subscribe( (MotorsCommand motorsCommand) -> {
 					System.out.println(motorsCommand);
-				}));
+				});
 		}
 		break;
 			
 		case STOP : 
 			System.out.println("%%%%%%%%%%%%%%%%%%%   STOPPING THE ROBOT.");
-			commandFluxion.onNext(new Command(STOP, null));
+			commandFlux.onNext(new Command(STOP, null));
 			break;
 			
 		case SAY_HELLO:
@@ -599,6 +605,24 @@ public class MovementCommandSubscriber extends ConsumerSubscriber<Command>  {
 		if(mc.getVelocityL() >= 0 && mc.getVelocityL() <= MAX_SPEED)
 			Gpio.pwmWrite(13, mc.getVelocityL());
 		
+		
+	}
+
+	@Override
+	public void onSubscribe(Subscription s) {
+		subscription = s;
+		subscription.request(Long.MAX_VALUE);
+	}
+
+	@Override
+	public void onError(Throwable t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onComplete() {
+		// TODO Auto-generated method stub
 		
 	}
 

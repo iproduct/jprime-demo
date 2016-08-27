@@ -1,31 +1,13 @@
 package org.iproduct.iptpi.domain.arduino;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.asin;
-import static java.lang.Math.hypot;
-import static java.lang.Math.signum;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-import static org.iproduct.iptpi.demo.robot.RobotParametrs.MAX_ROBOT_LINEAR_VELOCITY;
-import static org.iproduct.iptpi.domain.arduino.ArduinoCommand.*;
-
 import java.io.IOException;
 
-import org.iproduct.iptpi.domain.Command;
-import org.iproduct.iptpi.domain.movement.AbsoluteMovement;
-import org.iproduct.iptpi.domain.movement.MotorsCommand;
-import org.iproduct.iptpi.domain.movement.RelativeMovement;
-import org.iproduct.iptpi.domain.position.Position;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import com.pi4j.io.serial.Serial;
-import com.pi4j.io.serial.SerialPortException;
-import com.pi4j.wiringpi.Gpio;
 
-import reactor.core.subscriber.ConsumerSubscriber;
-import reactor.core.subscriber.Subscribers;
-import reactor.rx.Fluxion;
-
-public class ArduinoCommandSubscriber extends ConsumerSubscriber<ArduinoCommand>  {
+public class ArduinoCommandSubscriber implements Subscriber<ArduinoCommand>  {
 	
 	private Serial serial;
 	
@@ -34,7 +16,7 @@ public class ArduinoCommandSubscriber extends ConsumerSubscriber<ArduinoCommand>
 	}
 
 	@Override
-	public void doNext(ArduinoCommand command) {
+	public void onNext(ArduinoCommand command) {
 		switch (command) {
 		case FOLLOW_LINE :  // enable line following sensors readings
 		case NOT_FOLLOW_LINE :  // disable line following sensors readings
@@ -45,6 +27,24 @@ public class ArduinoCommandSubscriber extends ConsumerSubscriber<ArduinoCommand>
 			}
 			break;
 		}
+	}
+
+	@Override
+	public void onSubscribe(Subscription s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onError(Throwable t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onComplete() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

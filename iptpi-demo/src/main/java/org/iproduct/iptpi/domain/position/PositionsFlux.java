@@ -1,27 +1,27 @@
 package org.iproduct.iptpi.domain.position;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.ENCODER_STEP_LENGTH;
+import static org.iproduct.iptpi.demo.robot.RobotParametrs.MAIN_AXE_LENGTH;
+
 import org.iproduct.iptpi.domain.arduino.EncoderReadings;
 import org.reactivestreams.Subscriber;
 
-import reactor.bus.Event;
-import reactor.bus.EventBus;
-import reactor.bus.selector.Selector;
-import reactor.rx.Broadcaster;
-import reactor.rx.Fluxion;
+import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.SynchronousSink;
 
-import static java.lang.Math.*;
-import static org.iproduct.iptpi.demo.robot.RobotParametrs.*;
-
-public class PositionFluxion extends Fluxion<Position> {
-	private Fluxion<EncoderReadings> encoderReadings;
-	private Selector<?> selector;
+public class PositionsFlux extends  Flux<Position>{
+	private Flux<Position> positionsFlux;
+	private Flux<EncoderReadings> encoderReadings;
 	private PositionPanel panel =  new PositionPanel();
 	private Position currentPosition;
-	private Fluxion<Position> fluxion;
-
-	public PositionFluxion(Fluxion<EncoderReadings> encoderReadings) {
-		this.encoderReadings = encoderReadings;
-		
+	EmitterProcessor<Position> positionsEmitter;
+	SynchronousSink<Position> positionsSink;
+	
+	public PositionsFlux(Flux<EncoderReadings> readingsFlux) {
+		this.encoderReadings = readingsFlux;
 //		currentPosition = new Position(0, 0, PI/2);
 //		bus.on(selector, (Event<EncoderReadings> ev) -> {
 //			EncoderReadings enc = ev.getData(),
@@ -45,8 +45,8 @@ public class PositionFluxion extends Fluxion<Position> {
 //			panel.updateReport(pos);
 //		});
 		
-		Fluxion<EncoderReadings> skip1 = encoderReadings.skip(1);
-		fluxion = Fluxion.zip(encoderReadings, skip1)
+		Flux<EncoderReadings> skip1 = readingsFlux.skip(1);
+		positionsFlux = Flux.zip(readingsFlux, skip1)
 			.map(tupple -> {
 //				System.out.println(tupple); 
 				return tupple;
@@ -88,9 +88,9 @@ public class PositionFluxion extends Fluxion<Position> {
 		return currentPosition;
 	}
 
-	@Override
+	
 	public void subscribe(Subscriber<? super Position> s) {
-		fluxion.subscribe(s);	
+		positionsFlux.subscribe(s);	
 	}
 
 }

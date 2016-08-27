@@ -1,20 +1,15 @@
 package org.iproduct.iptpi.domain.arduino;
 // START SNIPPET: serial-snippet
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import org.reactivestreams.Subscriber;
 
 import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.SerialDataEvent;
 import com.pi4j.io.serial.SerialDataEventListener;
-import com.pi4j.io.serial.SerialFactory;
-import com.pi4j.io.serial.SerialPortException;
 
-import reactor.core.subscriber.SignalEmitter;
-import reactor.rx.Broadcaster;
-import reactor.rx.Fluxion;
+import reactor.core.publisher.BlockingSink;
+import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.Flux;
 
 /**
  * This class represents an event stream (Fluxion in Reactor terms) providing fluent API 
@@ -30,20 +25,21 @@ public class ArduinoData {
 	protected static final byte IN_ENCODERS_POSITION = 1;
 	protected static final byte IN_LINE_READINGS = 2;
 	private final Serial serial;
-	private final Broadcaster<EncoderReadings> positionsFluxion;
-	private final SignalEmitter<EncoderReadings> positionsEmitter;
-	private final Broadcaster<LineReadings> lineFluxion;
-	private final SignalEmitter<LineReadings> lineEmitter;
+	private final EmitterProcessor<EncoderReadings> positionsFlux;
+	private final BlockingSink<EncoderReadings> positionsSink;
+	private final EmitterProcessor<LineReadings> lineFlux;
+	private final BlockingSink<LineReadings> lineSink;
 	private long numberReadings = 0;
 
 	public ArduinoData(Serial serial) {
 		this.serial = serial;
 		
-		positionsFluxion = Broadcaster.create();
-		positionsEmitter = positionsFluxion.startEmitter();
+//		positionsFluxion = Broadcaster.create();
+		positionsFlux  = EmitterProcessor.create();
+		positionsSink = positionsFlux.connectSink();
                 
-		lineFluxion = Broadcaster.create();
-		lineEmitter = lineFluxion.startEmitter();
+		lineFlux = EmitterProcessor.create();
+		lineSink = lineFlux.connectSink();
                 
         System.out.println("Arduino serial communication started.");
         System.out.println(" Connection settings: 38400, N, 8, 1.");
@@ -72,8 +68,8 @@ public class ArduinoData {
 //								EncoderReadings readings = new EncoderReadings(encoderR, encoderL,
 //										START_ARDUINO_SERVICE_TIME + (numberReadings++) * ARDUNO_SERIAL_REPORT_PERIOD);
 //								System.out.println(readings);
-								if(positionsEmitter.hasRequested())
-									positionsEmitter.submit(readings); 
+								if(positionsSink.requestedFromDownstream() > 0)
+									positionsSink.next(readings); 
 							} else {
 								hasMoreData = false;
 							}
@@ -89,8 +85,8 @@ public class ArduinoData {
 										+ lineL + ", " + lineM + ", " + lineR
 										);
 								LineReadings lineReadings = new LineReadings(lineL, lineM, lineR, timestamp);
-								if(lineEmitter.hasRequested())
-									lineEmitter.submit(lineReadings); 
+								if(lineSink.requestedFromDownstream() > 0)
+									lineSink.next(lineReadings); 
 							} else {
 								hasMoreData = false;
 							}
@@ -107,12 +103,12 @@ public class ArduinoData {
 //		START_ARDUINO_SERVICE_TIME  = System.currentTimeMillis();
 	}
 	
-	public Fluxion<EncoderReadings> getPositionsFluxion() {
-		return positionsFluxion;	
+	public Flux<EncoderReadings> getEncoderReadingsFlux() {
+		return positionsFlux;	
 	}
 	
-	public Fluxion<LineReadings> getLineFluxion() {
-		return lineFluxion;
+	public Flux<LineReadings> getLineReadingsFlux() {
+		return lineFlux;
 	}
 }
 

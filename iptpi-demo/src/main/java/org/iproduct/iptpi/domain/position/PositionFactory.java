@@ -2,13 +2,13 @@ package org.iproduct.iptpi.domain.position;
 
 import org.iproduct.iptpi.domain.arduino.EncoderReadings;
 
-import reactor.rx.Fluxion;
+import reactor.core.publisher.Flux;
 
 public class PositionFactory {
-	public static PositionFluxion createPositionFluxion(Fluxion<EncoderReadings> encoderReadings) {
-		return new PositionFluxion(encoderReadings);
+	public static PositionsFlux createPositionFlux(Flux<EncoderReadings> flux) {
+		return new PositionsFlux(flux);
 	}
-	public static PositionPanel createPositionPanel(PositionFluxion fluxion) {
+	public static PositionPanel createPositionPanel(PositionsFlux fluxion) {
 		PositionPanel positionPanel = new PositionPanel();
 		fluxion.subscribe(positionPanel);
 		return positionPanel;

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<name>iptpi-demo</name>
@@ -16,55 +15,66 @@
 	</properties>
 
 	<dependencies>
+		<!-- http://mvnrepository.com/artifact/io.projectreactor/reactor-core -->
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-core</artifactId>
-			<version>2.5.0.BUILD-SNAPSHOT </version>
+			<version>3.0.0.RELEASE</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-bus</artifactId>
-			<version>2.5.0.BUILD-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-io</artifactId>
-			<version>2.5.0.BUILD-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
+			<groupId>io.projectreactor.ipc</groupId>
 			<artifactId>reactor-codec</artifactId>
-			<version>2.5.0.BUILD-SNAPSHOT</version>
+			<version>0.5.0.RELEASE</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-stream</artifactId>
-			<version>2.5.0.BUILD-SNAPSHOT</version>
+			<groupId>io.projectreactor.ipc</groupId>
+			<artifactId>reactor-ipc</artifactId>
+			<version>0.5.0.RELEASE</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-net</artifactId>
-			<version>2.5.0.BUILD-SNAPSHOT</version>
+			<groupId>io.projectreactor.addons</groupId>
+			<artifactId>reactor-bus</artifactId>
+			<version>0.6.0.BUILD-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- <dependency> <groupId>io.projectreactor</groupId> <artifactId>reactor-net</artifactId> 
+			<version>2.5.0.BUILD-SNAPSHOT</version> </dependency> -->
+		<dependency>
+			<groupId>io.projectreactor.ipc</groupId>
+			<artifactId>reactor-netty</artifactId>
+			<version>0.6.0.BUILD-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
-			<version>4.0.33.Final</version>
+			<version>4.1.4.Final</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.pi4j</groupId>
 			<artifactId>pi4j-core</artifactId>
 			<version>1.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
-		
-	    <!--  Gson: Java to Json conversion -->
-	    <dependency>
-	      <groupId>com.google.code.gson</groupId>
-	      <artifactId>gson</artifactId>
-	      <version>2.6.2</version>
-	      <scope>compile</scope>
-	    </dependency>
+
+		<!-- Gson: Java to Json conversion -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.6.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -76,20 +86,21 @@
 
 	<repositories>
 		<repository>
-			<id>spring</id>
-			<name>Spring Repository</name>
-			<url>http://repo.spring.io/snapshot/</url>
+			<id>spring-snapshot</id>
+			<name>Spring Repository Snapshot</name>
+			<url>http://repo.spring.io/snapshot</url>
+		</repository>
+		<repository>
+			<id>spring-release</id>
+			<name>Spring Repository Release</name>
+			<url>http://repo.spring.io/libs-release</url>
 		</repository>
 
-		<repository>
-			<id>oss-snapshots-repo</id>
-			<name>Sonatype OSS Maven Repository</name>
-			<url>https://oss.sonatype.org/content/groups/public</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
+
+		<!-- <repository> <id>oss-snapshots-repo</id> <name>Sonatype OSS Maven 
+			Repository</name> <url>https://oss.sonatype.org/content/groups/public</url> 
+			<snapshots> <enabled>true</enabled> <updatePolicy>always</updatePolicy> </snapshots> 
+			</repository> -->
 	</repositories>
 
 	<build>
