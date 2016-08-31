@@ -1,0 +1,59 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{title}}</h3>
+  </div>
+  <div class="robot-panel panel-body">
+    <div class="position-display">
+      <span class="display-position">
+        <label>X: </label>
+        <input  class="pos-display" [ngModel]="position.x | number:'.2-2'" readonly>
+      </span>
+      <span class="display-position">
+        <label>Y: </label>
+        <input class="pos-display" [ngModel]="position.y | number:'.2-2'" readonly>
+      </span>
+      <span class="display-position">
+        <label>Heading: </label>
+      	<input  class="pos-display" [ngModel]="position.heading | number:'.2-2'" readonly>
+      </span>
+    </div>
+    <canvas id="robot-canvas" class="robot-canvas center-block" width="400" height="500">
+    </canvas>
+
+    <div class="robot-controls" class="container-fluid">
+      <div class="row">
+        <button (click)="onGoUp()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-5" aria-label="Left Align">
+  						<span class="glyphicon glyphicon glyphicon-circle-arrow-up" aria-hidden="true"></span>
+      </button>
+      </div>
+      <div class="row">
+        <button (click)="onGoLeft()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-3" aria-label="Left Align">
+  						<span class="glyphicon glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
+				</button>
+        <button (click)="onGoRight()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-2" aria-label="Left Align">
+  						<span class="glyphicon glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+				</button>
+      </div>
+      <div class="row">
+        <button (click)="onGoDown()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-5" aria-label="Left Align">
+  						<span class="glyphicon glyphicon glyphicon-circle-arrow-down" aria-hidden="true"></span>
+				</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="position-display">
+    <span class="display-position">
+      <label>Distance: </label>
+      <input  class="pos-display" [(ngModel)]="command.deltaX" placeholder="mm">
+    </span>
+    <span class="display-position">
+      <label>Velocity: </label>
+      <input class="pos-display" [(ngModel)]="command.velocity" placeholder="mm/s">
+    </span>
+    <span class="display-position">
+      <label>Angle: </label>
+      <input  class="pos-display" [(ngModel)]="command.deltaHeading" placeholder="rad">
+    </span>
+  </div>
+</div>

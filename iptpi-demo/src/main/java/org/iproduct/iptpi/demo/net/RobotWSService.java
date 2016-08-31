@@ -43,7 +43,7 @@ public class RobotWSService {
 	// private final Map<String,String> cache = new HashMap<>();
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	private static final String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-	private final String MY_ADDRESS = "192.168.0.108";
+	private final String MY_ADDRESS = "192.168.1.202";
 	private final int MY_PORT = 80;
 	private Logger log = Loggers.getLogger("RobotWSService");
 
@@ -79,16 +79,23 @@ public class RobotWSService {
 		//// .httpProcessor(CodecPreprocessor.from(StandardCodecs.STRING_CODEC))
 		// .listen(MY_ADDRESS, MY_PORT) );
 		httpServer.get("/", getStaticResourceHandler())
-			.get("/css/**", getStaticResourceHandler())	
-			.get("/app/**", getStaticResourceHandler())
+//			.get("/css/**", getStaticResourceHandler())	
 			.get("/index.html", getStaticResourceHandler())
-			.get("/node_modules/**", getStaticResourceHandler())
-			.get("/js/**", getStaticResourceHandler())
-			.get("/img/**", getStaticResourceHandler())
-			.get("/fonts/**", getStaticResourceHandler())
+			.get("/app/**", getStaticResourceHandler())
+			.get("/assets/**", getStaticResourceHandler())
+			.get("/vendor/**", getStaticResourceHandler())
+//			.get("/img/**", getStaticResourceHandler())
+//			.get("/fonts/**", getStaticResourceHandler())
+			.get("/system-config.js", getStaticResourceHandler())
+			.get("/system-config.js.map", getStaticResourceHandler())
+			.get("/main.js", getStaticResourceHandler())
+			.get("/main.js.map", getStaticResourceHandler())
+			.get("/ember-cli-live-reload.js", getStaticResourceHandler())
 			.get("/favicon.ico", getStaticResourceHandler())
+			.get("/dashboard", getStaticResourceHandler())
 
 			.ws("/ws", getWsHandler())
+
 			// httpServer.directory("/",
 			// "/home/pi/.launchpi_projects/iptpi-demo/webapp/")
 			// httpServer.directory("/", "src/main/webapp/")
@@ -146,7 +153,7 @@ public class RobotWSService {
 			String uri = channel.uri();
 			channel.receiveString(UTF_8).subscribe(s -> System.out.println("RECEIVED: " + s));
 
-			if (uri.equals("/"))
+			if (uri.equals("/") || uri.indexOf('.') == -1)
 				uri = "/index.html";
 			// else if(uri.equals("/css/custom.css"))
 			// uri = "/css/custom.css";
@@ -191,7 +198,7 @@ public class RobotWSService {
 
 			// System.out.println("Content-Type: " + contentType);
 			// String path = "src/main/webapp" + uri;
-			String path = "/home/pi/.launchpi_projects/iptpi-demo/webapp" + uri; // Pi
+			String path = "/home/pi/.launchpi_projects/iptpi-demo/webapp/dist" + uri; // Pi
 			// String path = "src/main/webapp" + uri; // Laptop
 			// System.out.println("Path: " + path); // only
 
@@ -236,7 +243,7 @@ public class RobotWSService {
 					channel.receiveString().doOnNext(System.out::println)
 					.subscribe(	
 						json -> {
-		//				System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), json);
+//						System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), json);
 						RelativeMovement relativeMovement = gson.fromJson(json, RelativeMovement.class);
 		//				Command command = new Command(MOVE_FORWARD, 
 		//						new ForwardMovement(relativeMovement.getDeltaX(), relativeMovement.getVelocity()));

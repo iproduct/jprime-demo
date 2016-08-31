@@ -1,0 +1,4 @@
+.position-display label {display: inline-block; margin-left: 30px;}
+.pos-display {width: 80px; text-align:right;}
+.robot-controls {margin-top:10px;}
+.robot-controls button span {font-size: 2em;}
