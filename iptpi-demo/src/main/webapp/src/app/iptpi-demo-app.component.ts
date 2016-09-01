@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { APP_SHELL_DIRECTIVES } from '@angular/app-shell';
+// import { APP_SHELL_DIRECTIVES } from '@angular/app-shell';
 import {MdToolbar} from '@angular2-material/toolbar';
 import {MdButton} from '@angular2-material/button';
 import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav';
@@ -13,8 +13,8 @@ import {MdIcon, MdIconRegistry} from '@angular2-material/icon';
   template: `
     <md-sidenav-layout fullscreen>
       <md-sidenav #sidenav>
-        <md-nav-list *shellNoRender>
-          <a md-list-item *ngFor="let view of views" routerLink="/dashboard">
+        <md-nav-list >
+          <a md-list-item *ngFor="let view of views" routerLink="{{view.routerLink}}" (click)="sidenav.close()">
             <md-icon md-list-icon>{{view.icon}}</md-icon>
             <span md-line>{{view.name}}</span>
             <span md-line>{{view.description}}</span>
@@ -29,7 +29,7 @@ import {MdIcon, MdIconRegistry} from '@angular2-material/icon';
         </button>
         IPTPI Reactive Robotics Demo
       </md-toolbar>
-      <router-outlet *shellNoRender></router-outlet>
+      <router-outlet ></router-outlet>
     </md-sidenav-layout>
   `,
   // templateUrl: 'iptpi-demo-app.component.html',
@@ -39,7 +39,7 @@ import {MdIcon, MdIconRegistry} from '@angular2-material/icon';
     }
   `],
   directives: [
-    APP_SHELL_DIRECTIVES,
+    // APP_SHELL_DIRECTIVES,
     MdToolbar,
     MdButton,
     MD_SIDENAV_DIRECTIVES,
@@ -54,12 +54,14 @@ export class IptpiDemoAppComponent {
     {
       name: 'Commands',
       description: 'Command your robot',
-      icon: 'assignment_ind'
+      icon: 'explore',
+      routerLink: '/dashboard'
     },
     {
       name: 'Robot Settings',
       description: 'Edit robot settings',
-      icon: 'pets'
+      icon: 'pets',
+      routerLink: '/settings'
     }
   ];
 }

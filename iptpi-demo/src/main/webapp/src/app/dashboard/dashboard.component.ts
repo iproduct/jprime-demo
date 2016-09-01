@@ -48,7 +48,7 @@ const DEFAULT_COMMAND: MovementCommand = {
 
 @Component({
   moduleId: module.id,
-  selector: 'app-dashboard',
+  selector: 'iptpi-dashboard',
   templateUrl: 'dashboard.component.html',
   styleUrls: ['dashboard.component.css']
 })

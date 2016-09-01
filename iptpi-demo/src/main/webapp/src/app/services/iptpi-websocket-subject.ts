@@ -25,6 +25,12 @@ export class WebsocketErrorEvent {
     message: string;
 }
 
+export class WebsocketCloseEvent {
+    code: number;
+    reason: string;
+    wasClean: boolean;
+}
+
 
 /**
    * Creates a reactive WebSocket Subject with a given URL, protocol and an optional observer for open and close events.
@@ -44,10 +50,12 @@ export class IptpiWebsocketSubject extends Subject<string> {
   private websocket: WebSocket;
   private url: string;
   private openObserver: Observer<Event>;
-  private closingObserver: Observer<CloseEvent>;
+  private closingObserver: Observer<WebsocketCloseEvent>;
   private serverDestination: Subscriber<string>;
 
-  constructor(url: string, protocol: string, openObserver?: Observer<Event>, closingObserver?: Observer<CloseEvent>) {
+  constructor(url: string, protocol: string,
+              openObserver?: Observer<Event>,
+              closingObserver?: Observer<WebsocketCloseEvent>) {
     super();
 
     this.url = url;
@@ -92,7 +100,7 @@ export class IptpiWebsocketSubject extends Subject<string> {
       () => {
         console.log('WebSocket closing');
         this.websocket.close(1000, 'WS connection closed by client.');
-        let closeEvent: CloseEvent = new CloseEvent();
+        let closeEvent: WebsocketCloseEvent = new WebsocketCloseEvent();
         closeEvent.code = 1000; // CLOSE_NORMAL
         closeEvent.reason = 'WS connection closed by client.';
         closeEvent.wasClean = true;

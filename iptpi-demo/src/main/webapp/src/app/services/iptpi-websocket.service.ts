@@ -16,7 +16,6 @@
    */
 
 import { Injectable } from '@angular/core';
-import {Observer} from 'rxjs/Observer';
 import {Subscriber} from 'rxjs/Subscriber';
 import {IptpiWebsocketSubject} from './iptpi-websocket-subject';
 
