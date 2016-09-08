@@ -1,35 +1,6 @@
 package org.iproduct.iptpi.domain.serial;
-// START SNIPPET: serial-snippet
 
 import java.io.IOException;
-
-/*
- * #%L
- * **********************************************************************
- * ORGANIZATION  :  Pi4J
- * PROJECT       :  Pi4J :: Java Examples
- * FILENAME      :  SerialExample.java  
- * 
- * This file is part of the Pi4J project. More information about 
- * this project can be found here:  http://www.pi4j.com/
- * **********************************************************************
- * %%
- * Copyright (C) 2012 - 2015 Pi4J
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -43,7 +14,6 @@ import com.pi4j.io.serial.SerialConfig;
 import com.pi4j.io.serial.SerialDataEvent;
 import com.pi4j.io.serial.SerialDataEventListener;
 import com.pi4j.io.serial.SerialFactory;
-import com.pi4j.io.serial.SerialPortException;
 import com.pi4j.io.serial.StopBits;
 import com.pi4j.wiringpi.Gpio;
 
@@ -99,13 +69,9 @@ public class SerialExample {
 				byte[] reading;
 				try {
 					reading = event.getBytes();
-//					for (int i = 0; i < reading.length; i++)
-//						System.out.println(Integer.toBinaryString(reading[i]) + "  ");
-//					System.out.println();
 					System.out.println(new String(reading, Charset.forName("UTF-8")));
 //					System.out.println(Arrays.toString(reading));
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -115,11 +81,8 @@ public class SerialExample {
 
 		try {
 			// open the default serial port provided on the GPIO header
-			// serial.open(Serial.DEFAULT_COM_PORT, 38400);
-			// try {
 			serial.open(conf);
 			System.out.println("Demo running ... ");
-//			sc.nextLine();
 			
 			for (int i = 0; i < 50; i++) {
 				Gpio.digitalWrite(14, true);
@@ -131,40 +94,6 @@ public class SerialExample {
 			serial.removeListener(listener);
 			serial.close();
 			System.out.println("Demo finished.");
-			// } catch (IOException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-
-			// continuous loop to keep the program running until the user
-			// terminates the program
-			// for (;;) {
-			// try {
-			// // write a formatted string to the serial transmit buffer
-			// serial.write("CURRENT TIME: %s", new Date().toString());
-			//
-			// // write a individual bytes to the serial transmit buffer
-			// serial.write((byte) 13);
-			// serial.write((byte) 10);
-			//
-			// // write a simple string to the serial transmit buffer
-			// serial.write("Second Line");
-			//
-			// // write a individual characters to the serial transmit buffer
-			// serial.write('\r');
-			// serial.write('\n');
-			//
-			// // write a string terminating with CR+LF to the serial transmit
-			// buffer
-			// serial.writeln("Third Line");
-			// }
-			// catch(IllegalStateException ex){
-			// ex.printStackTrace();
-			// }
-			//
-			// // wait 1 second before continuing
-			// Thread.sleep(1000);
-			// }
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -175,4 +104,3 @@ public class SerialExample {
 	}
 }
 
-// END SNIPPET: serial-snippet
