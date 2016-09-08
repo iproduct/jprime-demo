@@ -9,8 +9,7 @@ public class MovementFactory {
 	
 	public static MovementCommandSubscriber createMovementCommandSubscriber(
 			PositionsFlux positions,
-			Flux<LineReadings> lineReadings,
-			AudioPlayer audio
+			Flux<LineReadings> lineReadings
 			) {
 		return new MovementCommandSubscriber(positions, lineReadings);
 	}

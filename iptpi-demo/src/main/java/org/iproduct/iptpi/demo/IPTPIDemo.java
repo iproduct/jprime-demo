@@ -48,14 +48,14 @@ public class IPTPIDemo {
 		audio = AudioFactory.createAudioPlayer();
 		
 		//wire robot main controller with services
-		movementSub = MovementFactory.createMovementCommandSubscriber(positionsFlux, arduinoData.getLineReadingsFlux(), audio);
+		movementSub = MovementFactory.createMovementCommandSubscriber(positionsFlux, arduinoData.getLineReadingsFlux());
 		controller = new RobotController(this::tearDown, movementSub, arduinoCommandsSub, audio);
 		
 		//create view with controller and delegate material views from query services
 		view = new RobotView("IPTPI Reactive Robotics Demo", controller, presentationViews);
 		
 		//expose as WS service
-		movementSub2 = MovementFactory.createMovementCommandSubscriber(positionsFlux, arduinoData.getLineReadingsFlux(), audio);
+		movementSub2 = MovementFactory.createMovementCommandSubscriber(positionsFlux, arduinoData.getLineReadingsFlux());
 		positionsService = new RobotWSService(positionsFlux, movementSub2);	
 				
 	}
