@@ -10,6 +10,7 @@ import com.pi4j.io.serial.Serial;
 public class ArduinoCommandSubscriber implements Subscriber<ArduinoCommand>  {
 	
 	private Serial serial;
+	private Subscription subscription;
 	
 	public ArduinoCommandSubscriber(Serial serial) {
 		this.serial = serial;
@@ -31,8 +32,8 @@ public class ArduinoCommandSubscriber implements Subscriber<ArduinoCommand>  {
 
 	@Override
 	public void onSubscribe(Subscription s) {
-		// TODO Auto-generated method stub
-		
+		subscription = s;
+		subscription.request(Long.MAX_VALUE);
 	}
 
 	@Override

@@ -23,8 +23,6 @@ import reactor.core.publisher.TopicProcessor;
 import reactor.core.scheduler.Schedulers;
 
 public class RobotController {
-	private MovementCommandSubscriber movementSub;
-	private ArduinoCommandSubscriber arduinoSub;
 	
 	private final EmitterProcessor<Command> commandsFlux = EmitterProcessor.create();
 	private final BlockingSink<Command> commandsSink = commandsFlux.connectSink();
@@ -32,31 +30,29 @@ public class RobotController {
 	private final EmitterProcessor<ArduinoCommand> arduinoCommandsFlux = EmitterProcessor.create();
 	private final BlockingSink<ArduinoCommand> arduinoCommandsSink = arduinoCommandsFlux.connectSink();
 	
-	private TopicProcessor<ArduinoCommand> arduinoCommands = TopicProcessor.create();
 	private Consumer<Integer> onExitSubscriber;
 	private AudioPlayer audio;
 		
 	public RobotController(Consumer<Integer> onExitSubscriber, MovementCommandSubscriber movementSub,
 			ArduinoCommandSubscriber arduinoSub, AudioPlayer audio) {
 		this.onExitSubscriber = onExitSubscriber;
-		this.movementSub = movementSub;
 		commandsFlux.subscribeOn(Schedulers.parallel()).subscribe(movementSub);
-		this.arduinoSub = arduinoSub;
 		arduinoCommandsFlux.subscribe(arduinoSub);
 		this.audio = audio;
 		
-		// Just in case the robot is moving
+		// Just in case the robot is moving - stop it
 		stop();
 	}
 
 	public void sayHello() {
-		commandsSink.submit(new Command(SAY_HELLO, null));
-//		arduinoCommandsSink.next(ArduinoCommand.NOT_FOLLOW_LINE);
+		System.out.println("Saying I'm IPTPI in Bulgarian :)");
+		audio.play();
+		System.out.println("Message play finished.");
 	}
 
 	public void stop() {
 		commandsSink.next(new Command(STOP, null));
-//		arduinoCommandsSink.next(ArduinoCommand.NOT_FOLLOW_LINE);
+		arduinoCommandsSink.next(ArduinoCommand.NOT_FOLLOW_LINE);
 	}
 
 	public void moveUp() {

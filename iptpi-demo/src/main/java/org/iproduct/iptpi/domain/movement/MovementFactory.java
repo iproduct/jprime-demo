@@ -12,6 +12,6 @@ public class MovementFactory {
 			Flux<LineReadings> lineReadings,
 			AudioPlayer audio
 			) {
-		return new MovementCommandSubscriber(positions, lineReadings, audio);
+		return new MovementCommandSubscriber(positions, lineReadings);
 	}
 } 

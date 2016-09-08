@@ -53,14 +53,10 @@ public class MovementCommandSubscriber implements Subscriber<Command>  {
 	//Create movement command broadcaster
 	private EmitterProcessor<Command> commandFlux = EmitterProcessor.create();
 	
-	//Audio player
-	AudioPlayer audio;
 	
-	
-	public MovementCommandSubscriber(PositionsFlux positions, Flux<LineReadings> lineReadings, AudioPlayer audio) {
+	public MovementCommandSubscriber(PositionsFlux positions, Flux<LineReadings> lineReadings) {
 		this.positions = positions;
 		this.lineReadings = lineReadings;
-		this.audio = audio;
 	}
 
 	@Override
@@ -79,11 +75,6 @@ public class MovementCommandSubscriber implements Subscriber<Command>  {
 			System.out.println("STOPPING THE ROBOT");
 			runMotors(STOP_COMMAND);
 			break;
-			
-		case SAY_HELLO:
-			System.out.println("Saying I'm IPTPI in Bulgarian :)");
-			audio.play();
-			System.out.println("Message play finished.");
 			
 		default:
 			break;
