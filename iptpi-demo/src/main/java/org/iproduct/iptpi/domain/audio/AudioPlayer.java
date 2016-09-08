@@ -1,28 +1,25 @@
 package org.iproduct.iptpi.domain.audio;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.pi4j.wiringpi.Gpio;
+import com.sun.media.codec.audio.mp3.JavaDecoder;
 
-
-
-public class AudioPlayer
-{
-	private static final int	BUFFER_SIZE = 128000;
+public class AudioPlayer {
 
 	public AudioPlayer() {
 		// initialize wiringPi library
-//		Gpio.wiringPiSetupGpio();
+		// Gpio.wiringPiSetupGpio();
 
 		// GPIO output pin
-		
 		Gpio.pinMode(17, Gpio.OUTPUT);
 		Gpio.pullUpDnControl(17, Gpio.PUD_DOWN);
 	}
@@ -30,76 +27,62 @@ public class AudioPlayer
 	public void enable() {
 		Gpio.digitalWrite(17, true);
 	}
-	
+
 	public void disable() {
 		Gpio.digitalWrite(17, false);
 	}
 
-	public void play()
-	{
-		
-		String	strFilename = "/home/pi/jPrime.wav";
-		File	soundFile = new File(strFilename);
-		System.out.println(soundFile);
-	
-		AudioInputStream	audioInputStream = null;
-		try
-		{
-			audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+	public void play() {
 
-		AudioFormat	audioFormat = audioInputStream.getFormat();
+		String strFilename = "/home/pi/az_robot.wav";
+		File soundFile = new File(strFilename);
 
-		SourceDataLine	line = null;
-		DataLine.Info	info = new DataLine.Info(SourceDataLine.class,
-												 audioFormat);
-		try
-		{
-			line = (SourceDataLine) AudioSystem.getLine(info);
-			line.open(audioFormat);
-		}
-		catch (LineUnavailableException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		new Thread(() -> {	
+			System.out.println(soundFile);
+			enable(); // enable speakers power
+			try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile)) {
+				// AudioFormat audioFormat = audioInputStream.getFormat();
+				// DataLine.Info info = new DataLine.Info(SourceDataLine.class,
+				// audioFormat, BUFFER_SIZE);
+				try (Clip clip = AudioSystem.getClip()) {
+					clip.open(audioInputStream);
+					clip.setFramePosition(0);
+					System.out.println(Arrays.toString(clip.getControls()));
+					clip.start();
+					clip.drain();
 
-		line.start();
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 
-		int	bytesRead = 0;
-		byte[]	abData = new byte[BUFFER_SIZE];
-		while (bytesRead != -1)
-		{
-			try
-			{
-				bytesRead = audioInputStream.read(abData, 0, abData.length);
-			}
-			catch (IOException e)
-			{
+					clip.stop();
+					clip.flush();
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					clip.close();
+					
+					
+
+				} catch (LineUnavailableException e) {
+					e.printStackTrace();
+					// System.exit(1);
+				}
+
+			} catch (UnsupportedAudioFileException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (bytesRead >= 0)
-			{
-				int	bytesWritten = line.write(abData, 0, bytesRead);
-			}
-		}
 
-		line.drain();
-		line.close();
-		try {
-			audioInputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			disable(); // disable speakers power
+			System.out.println("Audio playback finished.");
+
+		}).start();
 
 	}
 

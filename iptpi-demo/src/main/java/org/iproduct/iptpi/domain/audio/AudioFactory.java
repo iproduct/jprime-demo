@@ -1,7 +1,10 @@
 package org.iproduct.iptpi.domain.audio;
 
 public class AudioFactory {
+	private static AudioPlayer theInstance;
 	public static AudioPlayer createAudioPlayer() {
-		return new AudioPlayer();
+		if(theInstance == null)
+			theInstance = new AudioPlayer();
+		return theInstance;
 	}
 } 

@@ -11,6 +11,7 @@ import org.iproduct.iptpi.demo.view.RobotView;
 import org.iproduct.iptpi.domain.arduino.ArduinoCommandSubscriber;
 import org.iproduct.iptpi.domain.arduino.ArduinoData;
 import org.iproduct.iptpi.domain.arduino.ArduinoFactory;
+import org.iproduct.iptpi.domain.audio.AudioFactory;
 import org.iproduct.iptpi.domain.audio.AudioPlayer;
 import org.iproduct.iptpi.domain.movement.MovementCommandSubscriber;
 import org.iproduct.iptpi.domain.movement.MovementFactory;
@@ -44,8 +45,8 @@ public class IPTPIDemo {
 		arduinoCommnadsSub = ArduinoFactory.getInstance().createArduinoCommandSubscriber();
 		
 		//Audio player - added @jPrime 2016 Hackergarten 
-//		audio = AudioFactory.createAudioPlayer();
-		audio = null;
+		audio = AudioFactory.createAudioPlayer();
+//		audio = null;
 		
 		//wire robot main controller with services
 		movementSub = MovementFactory.createMovementCommandSubscriber(positionsFlux, arduinoData.getLineReadingsFlux(), audio);
@@ -74,6 +75,10 @@ public class IPTPIDemo {
 	public static void main(String[] args) {
 		// initialize wiringPi library
 		Gpio.wiringPiSetupGpio();
+		
+		// US distance sensor GPIO output pin - switch US off
+		Gpio.pinMode(14, Gpio.OUTPUT);
+		Gpio.digitalWrite(14, false);
 		
 		try {
 			IPTPIDemo demo = new IPTPIDemo();

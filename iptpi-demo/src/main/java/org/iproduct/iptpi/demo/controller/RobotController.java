@@ -20,9 +20,10 @@ import reactor.core.publisher.BlockingSink;
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.TopicProcessor;
+import reactor.core.scheduler.Schedulers;
 
 public class RobotController {
-	private MovementCommandSubscriber commandSub;
+	private MovementCommandSubscriber movementSub;
 	private ArduinoCommandSubscriber arduinoSub;
 	
 	private final EmitterProcessor<Command> commandsFlux = EmitterProcessor.create();
@@ -35,24 +36,27 @@ public class RobotController {
 	private Consumer<Integer> onExitSubscriber;
 	private AudioPlayer audio;
 		
-	public RobotController(Consumer<Integer> onExitSubscriber, MovementCommandSubscriber commandSub,
+	public RobotController(Consumer<Integer> onExitSubscriber, MovementCommandSubscriber movementSub,
 			ArduinoCommandSubscriber arduinoSub, AudioPlayer audio) {
 		this.onExitSubscriber = onExitSubscriber;
-		this.commandSub = commandSub;
-		commandsFlux.subscribe(commandSub);
+		this.movementSub = movementSub;
+		commandsFlux.subscribeOn(Schedulers.parallel()).subscribe(movementSub);
 		this.arduinoSub = arduinoSub;
 		arduinoCommandsFlux.subscribe(arduinoSub);
 		this.audio = audio;
+		
+		// Just in case the robot is moving
+		stop();
 	}
 
 	public void sayHello() {
-		commandsSink.next(new Command(SAY_HELLO, null));
-		arduinoCommandsSink.next(ArduinoCommand.NOT_FOLLOW_LINE);
+		commandsSink.submit(new Command(SAY_HELLO, null));
+//		arduinoCommandsSink.next(ArduinoCommand.NOT_FOLLOW_LINE);
 	}
 
 	public void stop() {
 		commandsSink.next(new Command(STOP, null));
-		arduinoCommandsSink.next(ArduinoCommand.NOT_FOLLOW_LINE);
+//		arduinoCommandsSink.next(ArduinoCommand.NOT_FOLLOW_LINE);
 	}
 
 	public void moveUp() {

@@ -61,7 +61,11 @@ public class MovementCommandSubscriber implements Subscriber<Command>  {
 		this.positions = positions;
 		this.lineReadings = lineReadings;
 		this.audio = audio;
-		
+	}
+
+	@Override
+	public void onNext(Command command) {
+
 		// Motor direction pins
 		Gpio.pinMode(5, Gpio.OUTPUT);
 		Gpio.pinMode(6, Gpio.OUTPUT);
@@ -71,10 +75,6 @@ public class MovementCommandSubscriber implements Subscriber<Command>  {
 		Gpio.pwmSetMode(Gpio.PWM_MODE_MS);
 		Gpio.pwmSetRange(MAX_SPEED);
 		Gpio.pwmSetClock(CLOCK_DIVISOR);
-	}
-
-	@Override
-	public void onNext(Command command) {
 		
 		switch (command.getName()) {
 		case MOVE_FORWARD : {
@@ -582,16 +582,15 @@ public class MovementCommandSubscriber implements Subscriber<Command>  {
 			
 		case STOP : 
 			System.out.println("%%%%%%%%%%%%%%%%%%%   STOPPING THE ROBOT.");
-			commandFlux.onNext(new Command(STOP, null));
+			runMotors(STOP_COMMAND);
+//			commandFlux.onNext(new Command(STOP, null));
 			break;
 			
 		case SAY_HELLO:
-			System.out.println("Saying HELLO jPrrime :)");
-			audio.enable();
+			System.out.println("Saying HELLO jPrime :)");
 			audio.play();
-			audio.disable();
+			System.out.println("Message play finished.");
 		}
-		
 
 	}
 

@@ -1,9 +1,6 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">{{title}}</h3>
-  </div>
+<div class="panel">
   <div class="robot-panel panel-body">
-    <div class="position-display">
+    <div class="position-display layout-row layout-align-space-around-center layout-wrap">
       <span class="display-position">
         <label>X: </label>
         <input  class="pos-display" [ngModel]="position.x | number:'.2-2'" readonly>
@@ -13,47 +10,50 @@
         <input class="pos-display" [ngModel]="position.y | number:'.2-2'" readonly>
       </span>
       <span class="display-position">
-        <label>Heading: </label>
+        <label>H: </label>
       	<input  class="pos-display" [ngModel]="position.heading | number:'.2-2'" readonly>
       </span>
     </div>
-    <canvas id="robot-canvas" class="robot-canvas center-block" width="400" height="500">
-    </canvas>
-
-    <div class="robot-controls" class="container-fluid">
-      <div class="row">
-        <button (click)="onGoUp()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-5" aria-label="Left Align">
-  						<span class="glyphicon glyphicon glyphicon-circle-arrow-up" aria-hidden="true"></span>
-      </button>
-      </div>
-      <div class="row">
-        <button (click)="onGoLeft()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-3" aria-label="Left Align">
-  						<span class="glyphicon glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
-				</button>
-        <button (click)="onGoRight()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-2" aria-label="Left Align">
-  						<span class="glyphicon glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
-				</button>
-      </div>
-      <div class="row">
-        <button (click)="onGoDown()" class="btn btn-md btn-warning col-xs-2 col-xs-offset-5" aria-label="Left Align">
-  						<span class="glyphicon glyphicon glyphicon-circle-arrow-down" aria-hidden="true"></span>
-				</button>
-      </div>
+    <div class="robot-canvas layout-row layout-align-space-around-center">
+      <canvas id="robot-canvas" width="400" height="400">
+      </canvas>
     </div>
+
+  <div class="robot-controls">
+      <div class="layout-row layout-align-center">
+        <button (click)="onGoUp()" md-raised-button color="primary" aria-label="Center Align">
+  						<md-icon md-list-icon>keyboard_arrow_up</md-icon>
+        </button>
+      </div>
+      <div class="layout-row layout-align-space-around-center">
+        <button (click)="onGoLeft()" md-raised-button color="primary" class="offset-10">
+  						<md-icon md-list-icon>keyboard_arrow_left</md-icon>
+				</button>
+        <button (click)="onGoRight()" md-raised-button color="primary" class="btn btn-right">
+  						<md-icon md-list-icon>keyboard_arrow_right</md-icon>
+				</button>
+      </div>
+      <div class="layout-row layout-align-center">
+        <button (click)="onGoDown()" md-raised-button color="primary" class="btn btn-down">
+  						<md-icon md-list-icon>keyboard_arrow_down</md-icon>
+				</button>
+      </div>
   </div>
 
-  <div class="position-display">
+  <div class="position-display layout-row layout-align-space-around-center layout-wrap">
     <span class="display-position">
-      <label>Distance: </label>
+      <label>Dist: </label>
       <input  class="pos-display" [(ngModel)]="command.deltaX" placeholder="mm">
     </span>
     <span class="display-position">
-      <label>Velocity: </label>
+      <label>V: </label>
       <input class="pos-display" [(ngModel)]="command.velocity" placeholder="mm/s">
     </span>
     <span class="display-position">
-      <label>Angle: </label>
+      <label>Ang: </label>
       <input  class="pos-display" [(ngModel)]="command.deltaHeading" placeholder="rad">
     </span>
+    <button (click)="onGoCustom()" md-raised-button color="primary"><md-icon md-list-icon class="play-icon">play_arrow</md-icon>
+    </button>
   </div>
 </div>

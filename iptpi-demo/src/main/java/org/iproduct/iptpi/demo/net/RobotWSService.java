@@ -152,160 +152,113 @@ public class RobotWSService {
 			// entry1.getValue())));
 			System.out.println("REQUESTED: " + channel.uri());
 			String uri = channel.uri();
-//			uri = uri.replace("/iptpi", "/");
 			
 			if(uri.equals("/ws")) {
-				System.out.println("Connected a websocket client: " + channel.remoteAddress());
-		//					channel.headers()
-		//							.entries()
-		//							.forEach(
-		//									entry1 -> System.out.println(String.format(
-		//											"header [%s=>%s]", entry1.getKey(),
-		//											entry1.getValue())));				
-				return channel.flushEach().upgradeToWebsocket()
-					.then(() -> {
-						channel.receiveString().doOnNext(System.out::println)
-						.subscribe(	
-							json -> {
-		//								System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), json);
-							RelativeMovement relativeMovement = gson.fromJson(json, RelativeMovement.class);
-			//				Command command = new Command(MOVE_FORWARD, 
-			//						new ForwardMovement(relativeMovement.getDeltaX(), relativeMovement.getVelocity()));
-							Command command = new Command(MOVE_RELATIVE, relativeMovement);
-							System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), command);				
-							movementCommands.onNext(command);
-						});
-				
-		
-						//signal to send initial data to client
-			//			timer.submit(time -> {System.out.println("Timeout"); channelBroadcaster.onNext("");}, 100);
-			
-						return positions
-							.doOnNext(System.out::println)
-							.map( position -> gson.toJson(position) )
-							.as(positionBuffer -> 
-								channel.sendString(positionBuffer, UTF_8)
-							);
-						
-					});
+				return getWebSocketHandler(channel);
 			} else {
-//				channel.receiveString(UTF_8).subscribe(s -> System.out.println("RECEIVED: " + s));
-				
-				if (uri.equals("/") || uri.indexOf('.') == -1)
-					uri = "/index.html";
-				// else if(uri.equals("/css/custom.css"))
-				// uri = "/css/custom.css";
-				// else {
-				// log.info("Resource not found: " + channel.uri());
-				// return channel.status(404).sendString(Mono.just("Resource not
-				// found: " + channel.uri()), Charset.forName("UTF-8"));
-				// }
-	
-				String contentType;
-				switch (uri.substring(uri.lastIndexOf('.') + 1)) { // resolve
-																	// content type
-																	// by file
-																	// extension
-				case "html":
-					contentType = "text/html;charset=utf-8";
-					break;
-				case "css":
-					contentType = "text/css";
-					break;
-				case "js":
-					contentType = "application/javascript";
-					break;
-				case "map":
-					contentType = "application/json";
-					break;
-				case "jpg":
-					contentType = "image/jpeg";
-					break;
-				case "png":
-					contentType = "image/png";
-					break;
-				case "gif":
-					contentType = "image/gif";
-					break;
-				case "ico":
-					contentType = "image/x-icon";
-					break;
-				default:
-					contentType = "text/plain";
-				}
-	
-				// System.out.println("Content-Type: " + contentType);
-				// String path = "src/main/webapp" + uri;
-				String path = "/home/pi/.launchpi_projects/iptpi-demo/webapp/dist" + uri; // Pi
-				// String path = "src/main/webapp" + uri; // Laptop
-				// System.out.println("Path: " + path); // only
-	
-				// ByteBuf responseBuffer;
-				// try {
-				// responseBuffer = getStaticResource(path);
-				// } catch (IOException e) {
-				// e.printStackTrace();
-				// responseBuffer =
-				// Unpooled.wrappedBuffer(e.getMessage().getBytes());
-				// }
-				// System.out.println("Content-Length: " +
-				// responseBuffer.readableBytes());
-	
-				Mono<Void> result = channel.status(200).addResponseHeader("Content-Type", contentType)
-						// .addResponseHeader("Content-Length",
-						// responseBuffer.readableBytes() + "")
-						.addResponseHeader("Connection", "close").removeTransferEncodingChunked()
-						// .send(Mono.just(responseBuffer));
-						.sendFile(new File(path));
-	
-				// channel.delegate().flush();
-				// result.subscribe(System.out::println);
-				// channel.headers().remove("transfer-encoding");
-				return result;
-	
-				// return channel.writeBufferWith(Flux.just(Buffer.wrap(response)));
+				return getStaticResourceHandler(channel);
 			}
 		};
 	}
 
-	private Function<? super HttpChannel, ? extends Publisher<Void>> getWsHandler() {
-		return channel -> {
-			System.out.println("Connected a websocket client: " + channel.remoteAddress());
-			// channel.headers()
-			// .entries()
-			// .forEach(
-			// entry1 -> System.out.println(String.format(
-			// "header [%s=>%s]", entry1.getKey(),
-			// entry1.getValue())));
-			return channel.flushEach().upgradeToWebsocket().then(() -> {
-				channel.receiveString().doOnNext(System.out::println).subscribe(json -> {
-					// System.out.printf(">>>>>>>>>>>>> %s WS Command Received:
-					// %s%n", Thread.currentThread(), json);
+	private Publisher<Void> getStaticResourceHandler(HttpChannel channel) {
+						
+		String uri = channel.uri();
+		
+		// enable HTML 5 History API 
+		if (uri.equals("/") || uri.indexOf('.') == -1)
+			uri = "/index.html";
+
+		String contentType;
+		// resolve content type by file extension
+		switch (uri.substring(uri.lastIndexOf('.') + 1)) { 
+		case "html":
+			contentType = "text/html;charset=utf-8";
+			break;
+		case "css":
+			contentType = "text/css";
+			break;
+		case "js":
+			contentType = "application/javascript";
+			break;
+		case "map":
+			contentType = "application/json";
+			break;
+		case "jpg":
+			contentType = "image/jpeg";
+			break;
+		case "png":
+			contentType = "image/png";
+			break;
+		case "gif":
+			contentType = "image/gif";
+			break;
+		case "ico":
+			contentType = "image/x-icon";
+			break;
+		default:
+			contentType = "text/plain";
+		}
+
+		String path = "/home/pi/.launchpi_projects/iptpi-demo/webapp/dist" + uri; // on Pi
+		String encodings = channel.headers().get("Accept-Encoding");
+		File responseFile;
+		
+		// try to send compresses js and css if available 
+		if(( contentType.equals("application/javascript") || contentType.equals("text/css") )
+				&& encodings != null && encodings.contains("gzip")) {
+			responseFile = new File(path + ".gz");
+			if(responseFile.exists()) {
+				channel.addResponseHeader("Content-Encoding", "gzip") ;
+			} else {
+				responseFile = new File(path);
+				if(!responseFile.exists()) {
+					return sendErrorNotFound(channel);
+				}
+			}
+		} else {
+			responseFile = new File(path);
+			if(!responseFile.exists()) {
+				return sendErrorNotFound(channel);
+			}
+		}
+		
+		Mono<Void> result = channel.status(200)
+				.addResponseHeader("Content-Type", contentType)
+				.addResponseHeader("Connection", "close").removeTransferEncodingChunked()
+				// .send(Mono.just(responseBuffer));
+				.sendFile(responseFile);
+		return result;
+	}
+
+	private  Publisher<Void> sendErrorNotFound(HttpChannel channel) {
+		 log.info("Resource not found: " + channel.uri());
+		 return channel.status(404).sendString(Mono.just("Client Error 404: Resource not found: " 
+				 + channel.uri()), Charset.forName("UTF-8"));
+	}
+	
+	private Publisher<Void> getWebSocketHandler(HttpChannel channel) {
+		System.out.println("Connected a websocket client: " + channel.remoteAddress());
+		
+		return channel.flushEach().upgradeToWebsocket()
+			.then(() -> {
+				channel.receiveString().doOnNext(System.out::println)
+				.subscribe(	
+					json -> {
+//						System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), json);
 					RelativeMovement relativeMovement = gson.fromJson(json, RelativeMovement.class);
-					// Command command = new Command(MOVE_FORWARD,
-					// new ForwardMovement(relativeMovement.getDeltaX(),
-					// relativeMovement.getVelocity()));
 					Command command = new Command(MOVE_RELATIVE, relativeMovement);
-					System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), command);
+					System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), command);				
 					movementCommands.onNext(command);
 				});
 
-				// signal to send initial data to client
-				// timer.submit(time -> {System.out.println("Timeout");
-				// channelBroadcaster.onNext("");}, 100);
-
-				return positions.doOnNext(System.out::println).map(position -> gson.toJson(position))
-						.as(positionBuffer -> channel.sendString(positionBuffer, UTF_8));
-
+				return positions
+					.doOnNext(System.out::println)
+					.map( position -> gson.toJson(position) )
+					.as(positionBuffer -> 
+						channel.sendString(positionBuffer, UTF_8)
+					);
 			});
-		};
-
-	}
-
-	private ByteBuf getStaticResource(String fileName) throws IOException {
-		Path filePath = Paths.get(fileName);
-		System.out.println(fileName);
-		return Unpooled.wrappedBuffer(Files.readAllBytes(filePath));
 	}
 
 }

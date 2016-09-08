@@ -54,7 +54,6 @@ const DEFAULT_COMMAND: MovementCommand = {
 })
 export class DashboardComponent implements OnInit {
 
-  public commnad = DEFAULT_COMMAND;
   public title = 'Command your IPTPI Robot';
   public position: Position = { 'x': 0, 'y': 0, 'heading': 0, timestamp: 0 };
   public positions: Position[] = [];
@@ -110,8 +109,10 @@ updateCanvasDrawing() {
     let canvasHeight = canvasWidth;
     this.canvas.width = canvasWidth;
     this.canvas.height = canvasHeight;
-    let imageWidth = Math.round(0.6 * canvasWidth);
-    let imageHeight = Math.round(1.2 * imageWidth);
+    let robotWidth = Math.round(0.6 * canvasWidth);
+    let robotHeight = Math.round(1.2 * robotWidth);
+    let compassWidth = Math.round(0.3 * canvasWidth);
+    let needleWidth = Math.round(1 * compassWidth);
     let centerX = canvasWidth * 0.6;
     let centerY = canvasHeight * 0.5;
 
@@ -122,20 +123,28 @@ updateCanvasDrawing() {
     this.ctx.save();
     this.ctx.translate(centerX, centerY);
     this.ctx.rotate(- this.position.heading);
-    this.ctx.drawImage(this.robotImage, -imageWidth / 2, -imageHeight / 2, imageWidth, imageHeight);
+    this.ctx.drawImage(this.robotImage, -robotWidth / 2, -robotHeight / 2, robotWidth, robotHeight);
     this.ctx.restore();
     // Draw compass
-    this.ctx.drawImage(this.compassImage, 0, 0);
+    this.ctx.drawImage(this.compassImage, 0, 0, compassWidth, compassWidth);
     // Draw compass needle
     this.ctx.save();
-    this.ctx.translate(100, 100);
+    this.ctx.translate(compassWidth / 2, compassWidth / 2);
     this.ctx.rotate(-this.position.heading);
-    this.ctx.drawImage(this.needleImage, -100, -100);
+    this.ctx.drawImage(this.needleImage, -compassWidth / 2, -compassWidth / 2, needleWidth, needleWidth);
     this.ctx.restore();
   }
 
   onGoUp() {
-    this.command = DEFAULT_COMMAND;
+    this.command = {
+      deltaX: 400,
+      deltaY: 0,
+      deltaHeading: 0,
+      velocity: 50,
+      angularVelocity: 0,
+      acceleration: 0,
+      angularAcceleration: 0
+    };
     this.submitToServer(this.command);
   }
 
@@ -143,7 +152,7 @@ updateCanvasDrawing() {
     this.command = {
       deltaX: 400,
       deltaY: 0,
-      deltaHeading: 1.5,
+      deltaHeading: 1.6,
       velocity: 40,
       angularVelocity: 0,
       acceleration: 0,
@@ -156,7 +165,7 @@ updateCanvasDrawing() {
     this.command = {
       deltaX: 400,
       deltaY: 0,
-      deltaHeading: -1.5,
+      deltaHeading: -1.6,
       velocity: 40,
       angularVelocity: 0,
       acceleration: 0,
@@ -175,6 +184,13 @@ updateCanvasDrawing() {
       acceleration: 0,
       angularAcceleration: 0
     };
+    this.submitToServer(this.command);
+  }
+
+  onGoCustom() {
+    this.command.deltaX = +this.command.deltaX;
+    this.command.velocity = +this.command.velocity;
+    this.command.deltaHeading = +this.command.deltaHeading;
     this.submitToServer(this.command);
   }
 
