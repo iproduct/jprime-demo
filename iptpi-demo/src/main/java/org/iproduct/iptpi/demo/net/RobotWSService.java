@@ -33,14 +33,11 @@ import reactor.util.Loggers;
 
 public class RobotWSService {
 	private HttpServer httpServer;
-	// private Timer timer;
 	private TopicProcessor<Command> movementCommands;
 	private PositionsFlux positions;
 	private MovementCommandSubscriber movements;
 	private Gson gson = new Gson();
-	// private EventBus serverReactor;
 
-	// private final Map<String,String> cache = new HashMap<>();
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	private static final String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 	private final String MY_ADDRESS = "192.168.1.202";
@@ -53,7 +50,6 @@ public class RobotWSService {
 		this.movements = movementSubscriber;
 		try {
 			setup();
-			// timer = Timer.create();
 			movementCommands = TopicProcessor.create();
 			movementCommands.subscribe(movementSubscriber);
 		} catch (InterruptedException e) {
@@ -74,82 +70,15 @@ public class RobotWSService {
 		// .keepAlive(false)
 		// .eventLoopGroup(workerGroup);
 		httpServer = HttpServer.create(hso);
-		// httpServer.((HttpServerSpec<Buffer,Buffer> serverSpec) ->
-		// serverSpec
-		//// .httpProcessor(CodecPreprocessor.from(StandardCodecs.STRING_CODEC))
-		// .listen(MY_ADDRESS, MY_PORT) );
-		httpServer
-//				.get("/**", getStaticResourceHandler())
-				// .get("/css/**", getStaticResourceHandler())
-				// .get("/index.html", getStaticResourceHandler())
-				// .get("/iptpi/**", getStaticResourceHandler())
-				// .get("/assets/**", getStaticResourceHandler())
-				// .get("/vendor/**", getStaticResourceHandler())
-				// .get("/img/**", getStaticResourceHandler())
-				// .get("/fonts/**", getStaticResourceHandler())
-				// .get("/system-config.js", getStaticResourceHandler())
-				// .get("/system-config.js.map", getStaticResourceHandler())
-				// .get("/main.js", getStaticResourceHandler())
-				// .get("/main.js.map", getStaticResourceHandler())
-				// .get("/ember-cli-live-reload.js", getStaticResourceHandler())
-				// .get("/favicon.ico", getStaticResourceHandler())
-				// .get("/dashboard", getStaticResourceHandler())
-
-				// .ws("/ws", getWsHandler())
-
-				// httpServer.directory("/",
-				// "/home/pi/.launchpi_projects/iptpi-demo/webapp/")
-				// httpServer.directory("/", "src/main/webapp/")
-				// httpServer.get("/**", getStaticResourceHandler())
-				.start(getResourceHandler()).subscribe();
-		// httpServer.startAndAwait(getStaticResourceHandler());
-		// .subscribe(v-> log.info("!!!!!!!!!! SERVER STARTED!" ));
+		httpServer.start(getResourceHandler()).subscribe();
 	}
 
 	public void teardown() throws InterruptedException {
 		httpServer.shutdown().subscribe(System.out::println);
-		// LoggerContext loggerContext = (LoggerContext)
-		// LoggerFactory.getILoggerFactory();
-		// loggerContext.stop();
 	}
-
-	// private ReactorHttpHandler<Buffer, Buffer> getHandler() {
-	// return channel -> {
-	//// channel.headers()
-	//// .entries()
-	//// .forEach(
-	//// entry1 -> System.out.println(String.format(
-	//// "header [%s=>%s]", entry1.getKey(),
-	//// entry1.getValue())));
-	//// System.out.println(channel.uri());
-	// String uri = channel.uri();
-	// if (uri.equals("/"))
-	// uri = "/index.html";
-	//// String path = "src/main/webapp" + uri;
-	// String path = "/home/pi/.launchpi_projects/iptpi-voxxed-demo/webapp" +
-	// uri; //Pi only
-	//
-	// String response;
-	// try {
-	// response = getStaticResource(path);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// response = e.getMessage();
-	// }
-	//
-	// return channel.writeWith(Flux.just(Buffer.wrap(response)));
-	//// return channel.writeBufferWith(Flux.just(Buffer.wrap(response)));
-	// };
-	// }
 
 	private Function<? super HttpChannel, ? extends Publisher<Void>> getResourceHandler() {
 		return channel -> {
-			// channel.headers()
-			// .entries()
-			// .forEach(
-			// entry1 -> System.out.println(String.format(
-			// "header [%s=>%s]", entry1.getKey(),
-			// entry1.getValue())));
 			System.out.println("REQUESTED: " + channel.uri());
 			String uri = channel.uri();
 			
@@ -243,9 +172,7 @@ public class RobotWSService {
 		return channel.flushEach().upgradeToWebsocket()
 			.then(() -> {
 				channel.receiveString().doOnNext(System.out::println)
-				.subscribe(	
-					json -> {
-//						System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), json);
+				.subscribe(	json -> {
 					RelativeMovement relativeMovement = gson.fromJson(json, RelativeMovement.class);
 					Command command = new Command(MOVE_RELATIVE, relativeMovement);
 					System.out.printf(">>>>>>>>>>>>> %s WS Command Received: %s%n", Thread.currentThread(), command);				

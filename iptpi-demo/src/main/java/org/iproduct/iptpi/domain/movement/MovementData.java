@@ -1,8 +1,6 @@
 package org.iproduct.iptpi.domain.movement;
 
-import org.iproduct.iptpi.domain.CommandData;
-
-public class MovementData extends CommandData{
+public class MovementData {
 	
 	//private float curvature = 0; // radians/mm
 	private float velocity = 40; // mm/sec

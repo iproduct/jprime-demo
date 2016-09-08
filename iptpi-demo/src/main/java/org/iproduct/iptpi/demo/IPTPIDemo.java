@@ -26,7 +26,7 @@ public class IPTPIDemo {
 	private RobotController controller;
 	private RobotView view;
 	private ArduinoData arduinoData;
-	private ArduinoCommandSubscriber arduinoCommnadsSub;
+	private ArduinoCommandSubscriber arduinoCommandsSub;
 	private PositionsFlux positionsFlux;
 	private MovementCommandSubscriber movementSub, movementSub2;
 	private List<JComponent> presentationViews = new ArrayList<>();
@@ -42,15 +42,14 @@ public class IPTPIDemo {
 		presentationViews.add(PositionFactory.createPositionPanel(positionsFlux));
 		
 		//enable sending commands to Arduino
-		arduinoCommnadsSub = ArduinoFactory.getInstance().createArduinoCommandSubscriber();
+		arduinoCommandsSub = ArduinoFactory.getInstance().createArduinoCommandSubscriber();
 		
 		//Audio player - added @jPrime 2016 Hackergarten 
 		audio = AudioFactory.createAudioPlayer();
-//		audio = null;
 		
 		//wire robot main controller with services
 		movementSub = MovementFactory.createMovementCommandSubscriber(positionsFlux, arduinoData.getLineReadingsFlux(), audio);
-		controller = new RobotController(this::tearDown, movementSub, arduinoCommnadsSub, audio);
+		controller = new RobotController(this::tearDown, movementSub, arduinoCommandsSub, audio);
 		
 		//create view with controller and delegate material views from query services
 		view = new RobotView("IPTPI Reactive Robotics Demo", controller, presentationViews);

@@ -90,15 +90,6 @@ public class RobotView extends JFrame{
 			mainPanel.add(service);
 		}
 		
-		// with anonimous class
-//		JButton btnUp = new JButton("Up");
-//		btnUp.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				controller.moveUp();
-//				mainPanel.repaint();
-//			}
-//		});
-		
 		// with lambda
 		JButton btnUp = new JButton("Up");
 		btnUp.addActionListener(
@@ -212,23 +203,6 @@ public class RobotView extends JFrame{
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(mntmExit);
 		
-		//Register application global key listeners
-//		KeyboardFocusManager.getCurrentKeyboardFocusManager()
-//		  .addKeyEventDispatcher(new KeyEventDispatcher() {
-//		      @Override
-//		      public boolean dispatchKeyEvent(KeyEvent ev) {
-//					switch (ev.getKeyCode()) {
-//						case VK_UP: controller.moveUp(); break;
-//						case VK_DOWN: controller.moveDown(); break;
-//						case VK_LEFT: controller.moveLeft(); break;
-//						case VK_RIGHT: controller.moveRight(); break;
-//					}
-//					System.out.println(ev.getKeyCode() + ", " + VK_UP);
-//					mainPanel.repaint();
-//					return false;
-//				}
-//		});
-		
 		// with lambda
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 		  .addKeyEventDispatcher(ev -> {
@@ -243,21 +217,6 @@ public class RobotView extends JFrame{
 			  	}
 				return false;
 			});
-
-//		KeyListener keyListener = new KeyAdapter() {
-//			@Override
-//			public void keyPressed(KeyEvent ev) {
-//				switch (ev.getKeyCode()) {
-//				case VK_UP: controller.moveUp(); break;
-//				case VK_DOWN: controller.moveDown(); break;
-//				case VK_LEFT: controller.moveLeft(); break;
-//				case VK_RIGHT: controller.moveRight(); break;
-//				}
-//				System.out.println(ev.getKeyCode() + ", " + VK_UP);
-//				mainPanel.repaint();
-//			}		
-//		};
-//		addKeyListener(keyListener);
 		
 		// show the window
 		GraphicsDevice d = GraphicsEnvironment

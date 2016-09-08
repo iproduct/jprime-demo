@@ -60,7 +60,6 @@ public class RobotController {
 	}
 
 	public void moveUp() {
-//		commands.onNext(new Command(MOVE_FORWARD, new ForwardMovement(400, 50)));
 		commandsSink.next(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, 0,  50)));
 	}
 
@@ -69,11 +68,11 @@ public class RobotController {
 	}
 
 	public void moveLeft() {
-		commandsSink.next(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, 1f,  40)));
+		commandsSink.next(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, 1.6f,  40)));
 	}
 
 	public void moveRight() {
-		commandsSink.next(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, -1f,  40)));
+		commandsSink.next(new Command(MOVE_RELATIVE, new RelativeMovement(400, 0, -1.6f,  40)));
 	}
 	
 	public void followLine() {
