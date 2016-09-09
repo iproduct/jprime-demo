@@ -11,7 +11,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.pi4j.wiringpi.Gpio;
-import com.sun.media.codec.audio.mp3.JavaDecoder;
 
 public class AudioPlayer {
 
