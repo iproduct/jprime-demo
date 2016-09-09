@@ -34,7 +34,6 @@ public class ArduinoData {
 	public ArduinoData(Serial serial) {
 		this.serial = serial;
 		
-//		positionsFluxion = Broadcaster.create();
 		positionsFlux  = EmitterProcessor.create();
 		positionsSink = positionsFlux.connectSink();
                 

@@ -182,8 +182,8 @@ public class RobotWSService {
 				return positions
 					.doOnNext(System.out::println)
 					.map( position -> gson.toJson(position) )
-					.as(positionBuffer -> 
-						channel.sendString(positionBuffer, UTF_8)
+					.as(positionString -> 
+						channel.sendString(positionString, UTF_8)
 					);
 			});
 	}

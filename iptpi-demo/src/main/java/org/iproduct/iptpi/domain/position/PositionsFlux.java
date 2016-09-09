@@ -22,28 +22,6 @@ public class PositionsFlux extends  Flux<Position>{
 	
 	public PositionsFlux(Flux<EncoderReadings> readingsFlux) {
 		this.encoderReadings = readingsFlux;
-//		currentPosition = new Position(0, 0, PI/2);
-//		bus.on(selector, (Event<EncoderReadings> ev) -> {
-//			EncoderReadings enc = ev.getData(),
-//				delta = new EncoderReadings(enc.getEncoderA() - previous.encoderA, 
-//						enc.getEncoderB() - previous.encoderB);
-//			currentPosition = new Position(enc.getEncoderA(), enc.getEncoderB());
-//			panel.updateReport(currentPosition);
-//			bus.notify(outEventTopic, Event.wrap(currentPosition)); 
-//		});
-		
-//		Fluxion<? extends Event<?>> events = bus.on(selector);
-//		Fluxion<? extends Event<?>> skip1 = events.skip(1);
-//		events.zipWith(skip1, (curr, prev) -> {
-//			int currA = ((EncoderReadings)curr.getData()).getEncoderA();
-//			int currB = ((EncoderReadings)curr.getData()).getEncoderB();
-//			int prevA = ((EncoderReadings)prev.getData()).getEncoderA();
-//			int prevB = ((EncoderReadings)prev.getData()).getEncoderB();
-//			return new Position(currA - prevA, currB - prevB, 0); 
-//		}).consume(pos -> {
-//			currentPosition = pos;
-//			panel.updateReport(pos);
-//		});
 		
 		Flux<EncoderReadings> skip1 = readingsFlux.skip(1);
 		positionsFlux = Flux.zip(readingsFlux, skip1)
