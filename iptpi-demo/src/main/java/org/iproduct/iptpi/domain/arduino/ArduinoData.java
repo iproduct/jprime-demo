@@ -53,7 +53,7 @@ public class ArduinoData {
 					ByteBuffer newBuffer = event.getByteBuffer();
 					buffer.put(newBuffer);
 					buffer.flip();
-					System.out.println("Readings length: " + buffer.remaining());
+//					System.out.println("Readings length: " + buffer.remaining());
 					boolean hasMoreData = true;
 					while(buffer.hasRemaining() && hasMoreData) {
 						switch(buffer.get(buffer.position())) {
@@ -66,7 +66,7 @@ public class ArduinoData {
 								EncoderReadings readings = new EncoderReadings(encoderR, encoderL, timestamp);
 //								EncoderReadings readings = new EncoderReadings(encoderR, encoderL,
 //										START_ARDUINO_SERVICE_TIME + (numberReadings++) * ARDUNO_SERIAL_REPORT_PERIOD);
-//								System.out.println(readings);
+								System.out.println(readings);
 								if(positionsSink.requestedFromDownstream() > 0)
 									positionsSink.next(readings); 
 							} else {

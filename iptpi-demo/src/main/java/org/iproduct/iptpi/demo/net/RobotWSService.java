@@ -3,12 +3,8 @@ package org.iproduct.iptpi.demo.net;
 import static org.iproduct.iptpi.domain.CommandName.MOVE_RELATIVE;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.Function;
 
 import org.iproduct.iptpi.domain.Command;
@@ -19,10 +15,6 @@ import org.reactivestreams.Publisher;
 
 import com.google.gson.Gson;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.TopicProcessor;
 import reactor.ipc.netty.config.ServerOptions;
@@ -40,7 +32,7 @@ public class RobotWSService {
 
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	private static final String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-	private final String MY_ADDRESS = "192.168.1.202";
+	private final String MY_ADDRESS = "192.168.0.108";
 	private final int MY_PORT = 80;
 	private Logger log = Loggers.getLogger("RobotWSService");
 

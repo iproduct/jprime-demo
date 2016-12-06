@@ -18,14 +18,14 @@
 import { Component, OnInit } from '@angular/core';
 import { IptpiWebsocketService } from '../services';
 
-interface Position {
+export interface Position {
   x: number;
   y: number;
   heading: number;
   timestamp: number;
 }
 
-interface MovementCommand {
+export interface MovementCommand {
   deltaX: number;
   deltaY: number;
   deltaHeading: number;
@@ -47,10 +47,9 @@ const DEFAULT_COMMAND: MovementCommand = {
 
 
 @Component({
-  moduleId: module.id,
   selector: 'iptpi-dashboard',
-  templateUrl: 'dashboard.component.html',
-  styleUrls: ['dashboard.component.css']
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 

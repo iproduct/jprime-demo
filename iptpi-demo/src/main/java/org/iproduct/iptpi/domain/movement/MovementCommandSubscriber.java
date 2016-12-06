@@ -189,8 +189,8 @@ public class MovementCommandSubscriber implements Subscriber<Command>  {
 					tarY = sin(angle) * r + yC;
 					tarH = startPos.getHeading() + deltaHeading;
 					remainingPathLength = (targetDeltaHeading - deltaHeading ) / targetCurvature;
-					System.out.println("   -----> tarX=" + tarX + ", tarY=" + tarY  + ", tarH=" + tarH + ", deltaHeading=" + deltaHeading + ", startAng=" + startAng + ", angle=" + angle);
-					System.out.println("   -----> r=" + r + ", xC=" + xC  + ", yC=" + yC );
+//					System.out.println("   -----> tarX=" + tarX + ", tarY=" + tarY  + ", tarH=" + tarH + ", deltaHeading=" + deltaHeading + ", startAng=" + startAng + ", angle=" + angle);
+//					System.out.println("   -----> r=" + r + ", xC=" + xC  + ", yC=" + yC );
 				}
 				
 				//calculating current trajectory parameters
@@ -236,19 +236,20 @@ public class MovementCommandSubscriber implements Subscriber<Command>  {
 	
 				
 				
-				System.out.println("!!! time=" + time + ", dt=" + dt  + ", tarX=" + tarX + ", tarY=" + tarY 
-						+ ", startH=" + startH + ", errH=" + errH + ", targetX=" + targetX + ", targetY=" + targetY + ", targetHeading=" + targetHeading 
-						+ ", errX=" + errX + ", errY=" + errY + ", dlandY=" + dlandY + ", currV=" + currV + ", dist=" + currDist 
-						+ ", switchAngV/dt=" + switchAngV / dt );
-				System.out.println("!!! landH=" + landH + ", dErrY=" + dErrY
-						+ ", currAngV=" + currAngV + ", landAngV=" + landAngV + ", switchAngV=" + switchAngV 
-						+ ", switchAngA=" + switchAngA + ", newAngV=" + newAngV );
-				System.out.println("!!! remainingPathLength=" + remainingPathLength + ", dErrX=" + dErrX + ", switchV=" + switchV + ", switchA=" + switchA );
-				System.out.println("!!! newDeltaV=" + switchA * dt / WHEEL_RADIUS + ", newDelatLR=" + newDeltaLR + ", newVL=" + newVL + ", newVR=" + newVR);
+				System.out.println("--> errH=" + errH + ", targetHeading=" + targetHeading + ", currH=" + currH + ", dist=" + currDist 
+						);
+//				System.out.println("!!! landH=" + landH + ", dErrY=" + dErrY
+//						+ ", currAngV=" + currAngV + ", landAngV=" + landAngV + ", switchAngV=" + switchAngV 
+//						+ ", switchAngA=" + switchAngA + ", newAngV=" + newAngV );
+//				System.out.println("!!! remainingPathLength=" + remainingPathLength + ", dErrX=" + dErrX + ", switchV=" + switchV + ", switchA=" + switchA );
+//				System.out.println("!!! newDeltaV=" + switchA * dt / WHEEL_RADIUS + ", newDelatLR=" + newDeltaLR + ", newVL=" + newVL + ", newVR=" + newVR);
 	
-							
+					
+				double remainingDeltaHeading = targetHeading - currH;
 				if(remainingPathLength < last.getRemainingPath() 
-						&& remainingPathLength > currV * currV / ROBOT_STOPPING_DECCELERATION ) { //drive until minimum distance to target
+						&& remainingPathLength > currV * currV / ROBOT_STOPPING_DECCELERATION
+					|| targetDeltaHeading > 0.01 
+						&& abs(remainingDeltaHeading) > 0.05 && remainingDeltaHeading * targetDeltaHeading > 0 ) { //drive until minimum distance to target
 					return new MotorsCommand(last.getDirL(), last.getDirR(),  newVL,  newVR, (float) remainingPathLength);
 				} else {
 					System.out.println("FINAL POSITION: " + currPos);

@@ -2,13 +2,10 @@ import { Component } from '@angular/core';
 // import { APP_SHELL_DIRECTIVES } from '@angular/app-shell';
 import {MdToolbar} from '@angular2-material/toolbar';
 import {MdButton} from '@angular2-material/button';
-import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav';
-import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {MdIcon, MdIconRegistry} from '@angular2-material/icon';
 // import { DogsComponent } from './+dogs';
 
 @Component({
-  moduleId: module.id,
   selector: 'iptpi-demo-app',
   template: `
     <md-sidenav-layout fullscreen>
@@ -38,14 +35,6 @@ import {MdIcon, MdIconRegistry} from '@angular2-material/icon';
       background: rgba(0,0,0,0.08);
     }
   `],
-  directives: [
-    // APP_SHELL_DIRECTIVES,
-    MdToolbar,
-    MdButton,
-    MD_SIDENAV_DIRECTIVES,
-    MD_LIST_DIRECTIVES,
-    MdIcon,
-  ],
   providers: [MdIconRegistry],
 })
 export class IptpiDemoAppComponent {

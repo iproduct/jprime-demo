@@ -30,7 +30,7 @@ public class IPTPIDemo {
 	private PositionsFlux positionsFlux;
 	private MovementCommandSubscriber movementSub, movementSub2;
 	private List<JComponent> presentationViews = new ArrayList<>();
-	private RobotWSService positionsService;
+	private RobotWSService remoteClientService;
 	private AudioPlayer audio;
 	
 	public IPTPIDemo() throws IOException {
@@ -56,7 +56,7 @@ public class IPTPIDemo {
 		
 		//expose as WS service
 		movementSub2 = MovementFactory.createMovementCommandSubscriber(positionsFlux, arduinoData.getLineReadingsFlux());
-		positionsService = new RobotWSService(positionsFlux, movementSub2);	
+		remoteClientService = new RobotWSService(positionsFlux, movementSub2);	
 				
 	}
 	
@@ -64,7 +64,7 @@ public class IPTPIDemo {
 		reactor.util.Logger log = Loggers.getLogger(this.getClass().getName());
 		log.info("Tearing down services and exiting the system");
 		try {
-			positionsService.teardown();
+			remoteClientService.teardown();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

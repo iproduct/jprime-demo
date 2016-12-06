@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<name>iptpi-demo</name>
-	<groupId>ipt.iptpi.demos</groupId>
-	<artifactId>iptpi-demo</artifactId>
+	<name>reactor-demos</name>
+	<groupId>demos</groupId>
+	<artifactId>reactor-demos</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<url>http://iproduct.org</url>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>io.projectreactor.ipc</groupId>
 			<artifactId>reactor-netty</artifactId>
-			<version>0.5.2.RELEASE</version>
+			<version>0.6.0.BUILD-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
