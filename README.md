@@ -10,7 +10,7 @@ The latest presentation is available in SlideShare (http://www.slideshare.net/Tr
 
 Server side is implemented using Reactor (http://projectreactor.io/) project. Main main class is org.iproduct.iptpi.demo.IPTPIDemo in src/main/java folder. The network communication is implemented in class org.iproduct.iptpi.demo.net.PositionsWsService. It serves all resources required by the client using Reactor Net (Netty), and could be started as console application - no webserver required. WebSocket bi-directional communication is implemented in a reactive (and compact) way in getWebSocketHandler() method.
 
-There are two types of clients - embedded client using Java Swing (whole screen mode on robot's 3.5" touchscreen TFT) and mobile web client using Angular 2 (TypereScript) and RxJS.
+There are two types of clients - embedded client using Java Swing (whole screen mode on robot's 3.5" touchscreen TFT) and mobile web client using Angular 2 (TypeScript) and RxJS.
 
 The emebedded Swing client is in class RobotView (https://github.com/iproduct/jprime-demo/blob/master/iptpi-demo/src/main/java/org/iproduct/iptpi/demo/view/RobotView.java)
 
