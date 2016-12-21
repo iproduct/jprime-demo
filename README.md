@@ -16,6 +16,6 @@ The emebedded Swing client is in class RobotView (https://github.com/iproduct/jp
 
 The web client (ng2 + RxJS) is in src/main/webapp folder (https://github.com/iproduct/jprime-demo/tree/master/iptpi-demo/src/main/webapp)
 
-The main Angular 2 application component class AppComponent is in src/main/webapp/app folder, together with custom reactive WebSocket implementation - IptpiWebsocketSubject component, exposed as Angular 2 service (IptpiWebsocketService). IptpiWebsocketSubject is exposing WebSocket as RxJS bidirectional subject (by idea from RxDOM), plus reactive WebSocket open and close observers.
+The main Angular 2 application component class AppComponent is in src/main/webapp/app folder, together with custom reactive WebSocket implementation - IptpiWebsocketSubject (https://github.com/iproduct/jprime-demo/blob/master/iptpi-demo/src/main/webapp/src/app/services/iptpi-websocket-subject.ts), exposed as Angular 2 service (IptpiWebsocketService). IptpiWebsocketSubject is exposing WebSocket as RxJS bidirectional subject (by idea from RxDOM), plus reactive WebSocket open and close observers.
 
 
