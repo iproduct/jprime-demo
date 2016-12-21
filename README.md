@@ -6,7 +6,7 @@ Demo presents ent-to-end reactive hot event stream processing of IPTPI robot sen
 
 More information about the Robots and Reactive Programming with Java, JS/TypeScript, Angular 2, React, Redux, Spring Reactor is available at RoboLearn (http://robolearn.org/) and IPT (http://iproduct.org/) webites.
 
-The latest presentation is available in SlideShare (http://www.slideshare.net/Trayan_Iliev/java-javascipt-reactive-robotics-and-iot-2016-jprofessionals).
+The latest presentation about this demo project is available in SlideShare (http://www.slideshare.net/Trayan_Iliev/java-javascipt-reactive-robotics-and-iot-2016-jprofessionals).
 
 Server side is implemented using Reactor (http://projectreactor.io/) project. Main main class is org.iproduct.iptpi.demo.IPTPIDemo in src/main/java folder. The network communication is implemented in class org.iproduct.iptpi.demo.net.PositionsWsService. It serves all resources required by the client using Reactor Net (Netty), and could be started as console application - no webserver required. WebSocket bi-directional communication is implemented in a reactive (and compact) way in getWebSocketHandler() method.
 
