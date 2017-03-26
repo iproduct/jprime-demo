@@ -32,7 +32,7 @@ public class RobotWSService {
 
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	private static final String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-	private final String MY_ADDRESS = "192.168.0.108";
+	private final String MY_ADDRESS = "10.0.244.20";
 	private final int MY_PORT = 80;
 	private Logger log = Loggers.getLogger("RobotWSService");
 

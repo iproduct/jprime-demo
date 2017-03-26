@@ -2,17 +2,10 @@ package demos;
 
 import java.util.Arrays;
 
-import reactor.core.publisher.BlockingSink;
-import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 public class ReactorFluxMethods {
-
-	public ReactorFluxMethods() {
-		// TODO Auto-generated constructor stub
-	}
 
 	public static void main(String... args) throws InterruptedException {
 		Flux.fromIterable(Arrays.asList(1L,2L,3L,0L,5L,6L,7L,8L,9L))

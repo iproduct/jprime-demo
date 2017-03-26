@@ -6,10 +6,6 @@ import reactor.core.scheduler.Schedulers;
 
 public class ReactorHelloWorld {
 
-	public ReactorHelloWorld() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public static void main(String... args) throws InterruptedException {
 		EmitterProcessor<String> emitter = EmitterProcessor.create();
 		BlockingSink<String> sink = emitter.connectSink();
